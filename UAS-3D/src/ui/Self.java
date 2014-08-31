@@ -178,17 +178,16 @@ public class Self extends JPanel
 				}
 			});
 			
-			JRadioButton rdbtnRandomAvoidanceAlgorithm = new JRadioButton("Random");
-			rdbtnRandomAvoidanceAlgorithm.setEnabled(false);
-			rdbtnRandomAvoidanceAlgorithm.setBounds(119, 17, 74, 23);
-			rdbtnRandomAvoidanceAlgorithm.setSelected(CONFIGURATION.selfCollisionAvoidanceAlgorithmSelection == "RandomAvoidanceAlgorithm");
-			collisionAvoidanceAlgorithmSelectionPanel.add(rdbtnRandomAvoidanceAlgorithm);
-			selfCollisionAvoidanceAlgorithmGroup.add(rdbtnRandomAvoidanceAlgorithm);
-			rdbtnRandomAvoidanceAlgorithm.addActionListener(new ActionListener() {
+			JRadioButton rdbtnACASX3DAvoidanceAlgorithm = new JRadioButton("ACASX3D");
+			rdbtnACASX3DAvoidanceAlgorithm.setBounds(102, 17, 87, 23);
+			rdbtnACASX3DAvoidanceAlgorithm.setSelected(CONFIGURATION.selfCollisionAvoidanceAlgorithmSelection == "ACASX3DAvoidanceAlgorithm");
+			collisionAvoidanceAlgorithmSelectionPanel.add(rdbtnACASX3DAvoidanceAlgorithm);
+			selfCollisionAvoidanceAlgorithmGroup.add(rdbtnACASX3DAvoidanceAlgorithm);
+			rdbtnACASX3DAvoidanceAlgorithm.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(((JRadioButton)e.getSource()).isSelected())
 					{
-						CONFIGURATION.selfCollisionAvoidanceAlgorithmSelection = "RandomAvoidanceAlgorithm";
+						CONFIGURATION.selfCollisionAvoidanceAlgorithmSelection = "ACASX3DAvoidanceAlgorithm";
 					}
 				}
 			});

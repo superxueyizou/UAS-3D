@@ -7,12 +7,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-
 public class ValueIteration
 {
 	private ACASXMDP mdp;
 
-	private final int numStates=(2*ACASXMDP.nh+1)*(2*ACASXMDP.noV+1)*(2*ACASXMDP.niV+1)*(ACASXMDP.nt+1)*(ACASXMDP.nra);
+	ACASXState[] states;
+	
+	private final int numStates=(ACASXMDP.nt+1)*(2*ACASXMDP.nh+1)*(2*ACASXMDP.noVy+1)*(2*ACASXMDP.niVy+1)*(ACASXMDP.nra);
 	
 	private double[] U= new double[numStates];
 
@@ -24,6 +25,7 @@ public class ValueIteration
 	public ValueIteration(ACASXMDP mdp, double gamma,double epsilon) 
 	{
 		this.mdp=mdp;
+		this.states= mdp.states();
 		if (gamma > 1.0 || gamma <= 0.0) 
 		{
 			throw new IllegalArgumentException("Gamma must be > 0 and <= 1.0");
@@ -34,21 +36,34 @@ public class ValueIteration
 			throw new IllegalArgumentException("epsilon must be >= 0");
 		}
 
-		double[] Udelta= new double[numStates];
-		double delta;
-
 		ACASXState[]states=mdp.states();
 		Map<ACASXState,Double> TransitionStatesAndProbs;
-		// repeat
-		int iteration=0;		
-		do 
+		
+		// Initialisation
+		for (int i=0; i<numStates;i++)
 		{
-			System.out.println(iteration++);			
-			U=Udelta.clone();
-			delta = 0;			
+			ACASXState s=states[i];
+			if(s.getT()==0)
+			{
+				U[i]=mdp.reward(s, -1);
+			}
+			else
+			{
+				U[i]=0;
+			}			
+		}
+		
+		//iteration
+		for(int iteration=1;iteration<=ACASXMDP.nt;iteration++) 
+		{
+			System.out.println(iteration);
 			for (int i=0; i<numStates;i++)
 			{
 				ACASXState s=states[i];
+				if(s.getT()!=iteration)
+				{
+					continue;
+				}
 				if(s.getOrder()!=i)
 				{
 					System.err.println("error happens in valueIteration() + s.getOrder()!=i");
@@ -59,6 +74,7 @@ public class ValueIteration
 
 				for (Integer a : actions) 
 				{
+//					System.out.println(s+"**********"+a);
 					double aSum=mdp.reward(s, a);					
 					TransitionStatesAndProbs= mdp.getTransitionStatesAndProbs(s, a);		
 					
@@ -75,19 +91,11 @@ public class ValueIteration
 						aMax = aSum;
 					}
 				}
-
-				Udelta[i]=aMax;
-				
-				double aDiff = Math.abs(aMax - U[i]);
-				if (aDiff > delta) 
-				{
-					delta = aDiff;
-				}
-				
+				U[i]=aMax;
 			}
-			
-		} while (delta > epsilon);		
-		U=Udelta.clone();
+						
+		} 	
+		
 	}
 		
 
@@ -123,20 +131,19 @@ public class ValueIteration
             costFileWriter = new FileWriter("src/saa/collsionavoidance/mdpLite/generatedFiles/costFile",false);
             actionFileWriter = new FileWriter("src/saa/collsionavoidance/mdpLite/generatedFiles/actionFile",false);
       
-            int index=0;
-            ACASXState[]states=mdp.states();
+            int index=0;            
 			for (int i=0; i<numStates;i++)
 			{
 				ACASXState s=states[i];
 				ArrayList<Integer> actions =mdp.actions(i);
-    			indexFileWriter.write(index+"\n");//+s.toString()
-    			index+=actions.size();
+    			indexFileWriter.write(index+"\n");    			
     			for (int a :actions ) 
     			{
     				actionFileWriter.write(a+"\n");    				
     				double QValue = getQValue(s, a);
     				costFileWriter.write(QValue+"\n");
-    			}			
+    			}
+    			index+=actions.size();
 
 			}
 			indexFileWriter.write(index+"\n");

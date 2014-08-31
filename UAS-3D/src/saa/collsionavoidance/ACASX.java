@@ -15,7 +15,9 @@ import modeling.SAAModel;
 import modeling.uas.UAS;
 import saa.collsionavoidance.mdpLite.ACASXMDP;
 import saa.collsionavoidance.mdpLite.ACASXState;
+import saa.collsionavoidance.mdpLite.ACASXUtils;
 import sim.engine.SimState;
+import sim.util.Double2D;
 
 
 /**
@@ -47,7 +49,7 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 	{
 		if(state.uasBag.size()!=2)
 		{
-			System.err.println("NASAChorus.java: only two UAVs are allowed in this setting");
+			System.err.println("ACASX.java: only two UAVs are allowed in this setting");
 		}
 		for(int i=0; i<state.uasBag.size(); i++)
 		{
@@ -81,40 +83,42 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 	public void execute()
 	{
 		double h=(intruder.getLocation().y-hostUAS.getLocation().y);
-		double oVz=hostUAS.getVelocity().y;
-		double iVz=intruder.getVelocity().y;
-		double timeToGo=(intruder.getLocation().x-hostUAS.getLocation().x)/(hostUAS.getVelocity().x-intruder.getVelocity().x);
+		double oVy=hostUAS.getVelocity().y;
+		double iVy=intruder.getVelocity().y;
+		Double2D vctDistance = new Double2D(hostUAS.getLocation().x-intruder.getLocation().x, hostUAS.getLocation().z-intruder.getLocation().z);
+		Double2D vctVelocity = new Double2D(intruder.getVelocity().x-hostUAS.getVelocity().x, intruder.getVelocity().z-hostUAS.getVelocity().z);
+		double timeToGo=vctDistance.lengthSq()/vctDistance.dot(vctVelocity);
 		int t=(int) Math.ceil(timeToGo);
-		state.information=String.format( "(%.1f, %.1f, %.1f, %.1f, %d)",h,oVz,iVz,timeToGo,ra);
+		state.information=String.format( "(%.1f, %.1f, %.1f, %.1f, %d)",h,oVy,iVy,timeToGo,ra);
 		
 		double hRes=ACASXMDP.hRes;
 		double oVRes=ACASXMDP.oVRes;
 		double iVRes=ACASXMDP.iVRes;
 		if(Math.abs(h)<ACASXMDP.UPPER_H && t<=ACASXMDP.nt && t>0)
 		{
-			if(Math.abs(oVz)<=ACASXMDP.UPPER_VZ && Math.abs(iVz)<=ACASXMDP.UPPER_VZ )
+			if(Math.abs(oVy)<=ACASXMDP.UPPER_VY && Math.abs(iVy)<=ACASXMDP.UPPER_VY )
 			{
 				Map<Integer, Double> qValuesMap = new TreeMap<>();
 				ArrayList<AbstractMap.SimpleEntry<Integer, Double>> actionMapValues = new ArrayList<AbstractMap.SimpleEntry<Integer, Double>>();
 
 				int hIdxL = (int)Math.floor(h/hRes);
-				int oVzIdxL = (int)Math.floor(oVz/oVRes);
-				int iVzIdxL = (int)Math.floor(iVz/iVRes);
+				int oVyIdxL = (int)Math.floor(oVy/oVRes);
+				int iVyIdxL = (int)Math.floor(iVy/iVRes);
 				for(int i=0;i<=1;i++)
 				{
 					int hIdx = (i==0? hIdxL : hIdxL+1);
 					int hIdxP= hIdx< -ACASXMDP.nh? -ACASXMDP.nh: (hIdx>ACASXMDP.nh? ACASXMDP.nh : hIdx);			
 					for(int j=0;j<=1;j++)
 					{
-						int oVzIdx = (j==0? oVzIdxL : oVzIdxL+1);
-						int oVzIdxP= oVzIdx<-ACASXMDP.noV? -ACASXMDP.noV: (oVzIdx>ACASXMDP.noV? ACASXMDP.noV : oVzIdx);
+						int oVyIdx = (j==0? oVyIdxL : oVyIdxL+1);
+						int oVyIdxP= oVyIdx<-ACASXMDP.noVy? -ACASXMDP.noVy: (oVyIdx>ACASXMDP.noVy? ACASXMDP.noVy : oVyIdx);
 						for(int k=0;k<=1;k++)
 						{
-							int iVzIdx = (k==0? iVzIdxL : iVzIdxL+1);
-							int iVzIdxP= iVzIdx<-ACASXMDP.niV? -ACASXMDP.niV: (iVzIdx>ACASXMDP.niV? ACASXMDP.niV : iVzIdx);
+							int iVyIdx = (k==0? iVyIdxL : iVyIdxL+1);
+							int iVyIdxP= iVyIdx<-ACASXMDP.niVy? -ACASXMDP.niVy: (iVyIdx>ACASXMDP.niVy? ACASXMDP.niVy : iVyIdx);
 							
-							ACASXState approxState= new ACASXState(hIdxP, oVzIdxP, iVzIdxP, t, ra);
-							double probability= (1-Math.abs(hIdx-h/hRes))*(1-Math.abs(oVzIdx-oVz/oVRes))*(1-Math.abs(iVzIdx-iVz/iVRes));
+							ACASXState approxState= new ACASXState(t,hIdxP, oVyIdxP, iVyIdxP,ra);
+							double probability= (1-Math.abs(hIdx-h/hRes))*(1-Math.abs(oVyIdx-oVy/oVRes))*(1-Math.abs(iVyIdx-iVy/iVRes));
 
 							int index=-999;
 							int numActions=-999;
@@ -147,7 +151,6 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 				int bestActionCode=-999;
 				
 				Set<Entry<Integer,Double>> entrySet = qValuesMap.entrySet();
-//				System.out.println( qValuesMap.keySet());
 				for (Entry<Integer,Double> entry : entrySet) 
 				{
 					double value=entry.getValue();
@@ -157,11 +160,7 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 						bestActionCode=entry.getKey();
 					}
 				}			
-		
-//				System.out.println("  Best action code is "+bestActionCode);
-				
-				ra=bestActionCode;
-				
+				ra=bestActionCode;				
 				hostUAS.getAp().setActionCode(bestActionCode);		
 			}
 			else
@@ -169,8 +168,7 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 				ra=0;
 				
 				hostUAS.getAp().setActionCode(0);	
-			}
-				
+			}				
 		
 		}
 		else
@@ -179,5 +177,17 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 		}			
 		
 	}
+	
+	public double getActionV(int actionCode)
+	{
+		return ACASXUtils.getActionV(actionCode);
+	
+	}
+	
+	public double getActionA(int actionCode)
+	{
+		return ACASXUtils.getActionA(actionCode);
+	
+	}	
 	
 }

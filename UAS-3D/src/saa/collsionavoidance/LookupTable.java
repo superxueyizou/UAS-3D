@@ -25,7 +25,7 @@ public class LookupTable
 		System.out.println("Reading look-up table...!");
 		long startTime = System.currentTimeMillis();		
 	
-		int numEntries=(2*ACASXMDP.nh+1)*(2*ACASXMDP.noV+1)*(2*ACASXMDP.niV+1)*(ACASXMDP.nt+1)*(ACASXMDP.nra) + 1;
+		int numEntries=(2*ACASXMDP.nh+1)*(2*ACASXMDP.noVy+1)*(2*ACASXMDP.niVy+1)*(ACASXMDP.nt+1)*(ACASXMDP.nra) + 1;
 		indexArr= new ArrayList<>();
 		try 
         {

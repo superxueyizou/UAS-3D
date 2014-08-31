@@ -5,6 +5,7 @@ package modeling.encountergenerator;
 
 import saa.AutoPilot;
 import saa.collsionavoidance.ACASX;
+import saa.collsionavoidance.ACASX3D;
 import saa.collsionavoidance.CollisionAvoidanceAlgorithm;
 import saa.collsionavoidance.CollisionAvoidanceAlgorithmAdapter;
 import saa.selfseparation.NASAChorus;
@@ -16,7 +17,6 @@ import saa.sense.PerfectSensor;
 import saa.sense.Radar;
 import saa.sense.SensorSet;
 import saa.sense.TCAS;
-import sim.util.Double2D;
 import sim.util.Double3D;
 import tools.CONFIGURATION;
 import modeling.SAAModel;
@@ -92,6 +92,9 @@ public class HeadOnGenerator extends EncounterGenerator
 		{
 			case "ACASXAvoidanceAlgorithm":
 				caa= new ACASX(state, intruder);
+				break;
+			case "ACASX3DAvoidanceAlgorithm":
+				caa= new ACASX3D(state, intruder);
 				break;
 			case "None":
 				caa= new CollisionAvoidanceAlgorithmAdapter(state, intruder);

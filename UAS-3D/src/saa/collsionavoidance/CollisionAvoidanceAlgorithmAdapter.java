@@ -40,6 +40,16 @@ public class CollisionAvoidanceAlgorithmAdapter extends CollisionAvoidanceAlgori
 	{
 		
 	}
+
+	@Override
+	public double getActionA(int actionCode) {
+		return Double.NaN;
+	}
+
+	@Override
+	public double getActionV(int actionCode) {
+			return Double.NaN;
+	}
 	
 	
 

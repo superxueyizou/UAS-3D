@@ -46,7 +46,7 @@ public class CONFIGURATION {
 	public static double selfViewingAngle = Math.toRadians(60);
 	public static int selfSensorSelection = 0B10000; 
 	public static String selfAutoPilotAlgorithmSelection = "WhiteNoise";
-	public static String selfCollisionAvoidanceAlgorithmSelection = "ACASXAvoidanceAlgorithm"; //"ACASXAvoidanceAlgorithm","RandomAvoidanceAlgorithm", "None"
+	public static String selfCollisionAvoidanceAlgorithmSelection = "ACASX3DAvoidanceAlgorithm"; //"ACASXAvoidanceAlgorithm","ACASX3DAvoidanceAlgorithm", "None"
 	public static String selfSelfSeparationAlgorithmSelection = "NASAChorusAlgorithm"; //"NASAChorusAlgorithm","None"
 
 	
@@ -72,7 +72,7 @@ public class CONFIGURATION {
 	public static double headOnViewingAngle =  Math.toRadians(60);
 	public static int headOnSensorSelection = 0B10000; 
 	public static String headOnAutoPilotAlgorithmSelection = "WhiteNoise";
-	public static String headOnCollisionAvoidanceAlgorithmSelection = "ACASXAvoidanceAlgorithm"; //"ACASXAvoidanceAlgorithm", "RandomAvoidanceAlgorithm", "None"
+	public static String headOnCollisionAvoidanceAlgorithmSelection = "ACASX3DAvoidanceAlgorithm"; //"ACASXAvoidanceAlgorithm", "ACASX3DAvoidanceAlgorithm", "None"
 	public static String headOnSelfSeparationAlgorithmSelection = "NASAChorusAlgorithm"; //"NASAChorusAlgorithm","None"
 		
 	

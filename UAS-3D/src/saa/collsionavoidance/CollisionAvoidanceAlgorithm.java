@@ -35,4 +35,8 @@ public abstract class CollisionAvoidanceAlgorithm implements Steppable
 	@Override
 	public abstract void step(SimState simState);
 
+	public abstract double getActionA(int actionCode);
+
+	public abstract double getActionV(int actionCode);
+
 }

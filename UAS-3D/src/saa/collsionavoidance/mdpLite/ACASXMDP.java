@@ -18,20 +18,20 @@ public class ACASXMDP
 
 	//"COC"-->0,"CL25"-->1, "DES25"-->2
 	//"Loop"-->-1
-	public static final int nh = 10;//10
-	public static final int noV= 14;//14
-	public static final int niV= 14;//14
 	public static final int nt=20;
+	public static final int nh = 10;//10
+	public static final int noVy= 7;//14
+	public static final int niVy= 7;//14
 	public static final int nra=7;
 	
 	public static final double UPPER_H=600.0;
-	public static final double UPPER_VZ=42.0;
+	public static final double UPPER_VY=42.0;
 	
 	public static final double hRes = UPPER_H/nh;
-	public static final double oVRes = UPPER_VZ/noV;
-	public static final double iVRes = UPPER_VZ/niV;
+	public static final double oVRes = UPPER_VY/noVy;
+	public static final double iVRes = UPPER_VY/niVy;
 
-	private final int numStates= (2*nh+1)*(2*noV+1)*(2*niV+1)*(nt+1)*nra;
+	private final int numStates= (nt+1)*(2*nh+1)*(2*noVy+1)*(2*niVy+1)*nra;
 	private ACASXState[] states= new ACASXState[numStates];
 	
 	public final static double WHITE_NOISE_SDEV=3.0;
@@ -40,23 +40,21 @@ public class ACASXMDP
 
 	
 	public ACASXMDP() 
-	{		
-		for(int hIdx=-nh; hIdx<=nh;hIdx++)//
+	{	
+		for(int tIdx=0; tIdx<=nt;tIdx++)//
 		{
-			for(int oVzIdx=-noV; oVzIdx<=noV;oVzIdx++)//
+			for(int hIdx=-nh; hIdx<=nh;hIdx++)//
 			{
-				for(int iVzIdx=-niV; iVzIdx<=niV;iVzIdx++)
-				{					
-					for(int tIdx=0; tIdx<=nt;tIdx++)//
-					{
+				for(int oVyIdx=-noVy; oVyIdx<=noVy;oVyIdx++)//
+				{
+					for(int iVyIdx=-niVy; iVyIdx<=niVy;iVyIdx++)
+					{	
 						for(int raIdx=0; raIdx<nra;raIdx++)//
 						{
-							ACASXState state = new ACASXState(hIdx, oVzIdx, iVzIdx, tIdx, raIdx);							
+							ACASXState state = new ACASXState(tIdx,hIdx, oVyIdx, iVyIdx, raIdx);							
 							states[state.getOrder()]=state;		
 						}
-						
 					}
-					
 				}
 			}
 		}
@@ -98,13 +96,13 @@ public class ACASXMDP
 			actions.add(-1);//"Loop"
 			return actions;
 		}
-		if(state.getH()==UPPER_H || state.getoVz()== UPPER_VZ)
+		if(state.getH()==UPPER_H || state.getoVy()== UPPER_VY)
 		{
 			actions.add(0);//"COC"
 			actions.add(4);//"SDES25"
 			return actions;
 		}
-		if(state.getH()==-UPPER_H || state.getoVz()== -UPPER_VZ)
+		if(state.getH()==-UPPER_H || state.getoVy()== -UPPER_VY)
 		{
 			actions.add(0);//"COC"
 			actions.add(3);//"SCL25"
@@ -197,40 +195,40 @@ public class ACASXMDP
 		double accel=ACASXUtils.getActionA(actionCode);
 		ArrayList<AbstractMap.SimpleEntry<ACASXState, Double>> nextStateMapProbabilities = new ArrayList<>();
 		
-		if( (accel>0 && targetV>state.getoVz() && state.getoVz()<UPPER_VZ)
-				|| (accel<0 && targetV<state.getoVz() && state.getoVz()>-UPPER_VZ))
+		if( (accel>0 && targetV>state.getoVy() && state.getoVy()<UPPER_VY)
+				|| (accel<0 && targetV<state.getoVy() && state.getoVy()>-UPPER_VY))
 		{// own aircraft follows a RA other than COC			
 			
 			for(Tuple<Double, Double, Double> sigmaPoint : sigmaPointsA)
 			{
-				double oAz=accel;
-				double iAz=sigmaPoint.y;
+				double oAy=accel;
+				double iAy=sigmaPoint.y;
 				double sigmaP=sigmaPoint.z;
 				
-				double hP= state.getH()+ (state.getiVz()-state.getoVz()) + 0.5*(iAz-oAz);
-				double oVzP= Math.max(-UPPER_VZ, Math.min(UPPER_VZ, state.getoVz()+oAz));
-				double iVzP= Math.max(-UPPER_VZ, Math.min(UPPER_VZ, state.getiVz()+iAz));
+				double hP= state.getH()+ (state.getiVy()-state.getoVy()) + 0.5*(iAy-oAy);
+				double oVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getoVy()+oAy));
+				double iVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getiVy()+iAy));
 				int tP=state.getT()-1;
 				int raP=actionCode;
 				
 				int hIdxL = (int)Math.floor(hP/hRes);
-				int oVzIdxL = (int)Math.floor(oVzP/oVRes);
-				int iVzIdxL = (int)Math.floor(iVzP/iVRes);
+				int oVyIdxL = (int)Math.floor(oVyP/oVRes);
+				int iVyIdxL = (int)Math.floor(iVyP/iVRes);
 				for(int i=0;i<=1;i++)
 				{
 					int hIdx = (i==0? hIdxL : hIdxL+1);
 					int hIdxP= hIdx< -nh? -nh: (hIdx>nh? nh : hIdx);			
 					for(int j=0;j<=1;j++)
 					{
-						int oVzIdx = (j==0? oVzIdxL : oVzIdxL+1);
-						int oVzIdxP= oVzIdx<-noV? -noV: (oVzIdx>noV? noV : oVzIdx);
+						int oVyIdx = (j==0? oVyIdxL : oVyIdxL+1);
+						int oVyIdxP= oVyIdx<-noVy? -noVy: (oVyIdx>noVy? noVy : oVyIdx);
 						for(int k=0;k<=1;k++)
 						{
-							int iVzIdx = (k==0? iVzIdxL : iVzIdxL+1);
-							int iVzIdxP= iVzIdx<-niV? -niV: (iVzIdx>niV? niV : iVzIdx);
+							int iVyIdx = (k==0? iVyIdxL : iVyIdxL+1);
+							int iVyIdxP= iVyIdx<-niVy? -niVy: (iVyIdx>niVy? niVy : iVyIdx);
 							
-							ACASXState nextState= new ACASXState(hIdxP, oVzIdxP, iVzIdxP, tP, raP);
-							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVzIdx-oVzP/oVRes))*(1-Math.abs(iVzIdx-iVzP/iVRes));
+							ACASXState nextState= new ACASXState(tP,hIdxP, oVyIdxP, iVyIdxP, raP);
+							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVyIdx-oVyP/oVRes))*(1-Math.abs(iVyIdx-iVyP/iVRes));
 							nextStateMapProbabilities.add(new SimpleEntry<ACASXState, Double>(nextState,probability) );
 						}
 					}
@@ -243,34 +241,34 @@ public class ACASXMDP
 		{				
 			for(Tuple<Double, Double, Double> sigmaPoint : sigmaPointsB)
 			{
-				double oAz=sigmaPoint.x;
-				double iAz=sigmaPoint.y;
+				double oAy=sigmaPoint.x;
+				double iAy=sigmaPoint.y;
 				double sigmaP=sigmaPoint.z;
 				
-				double hP= state.getH()+ (state.getiVz()-state.getoVz()) + 0.5*(iAz-oAz);
-				double oVzP= Math.max(-UPPER_VZ, Math.min(UPPER_VZ, state.getoVz()+oAz));
-				double iVzP= Math.max(-UPPER_VZ, Math.min(UPPER_VZ, state.getiVz()+iAz));
+				double hP= state.getH()+ (state.getiVy()-state.getoVy()) + 0.5*(iAy-oAy);
+				double oVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getoVy()+oAy));
+				double iVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getiVy()+iAy));
 				int tP=state.getT()-1;
 				int raP=actionCode;
 
 				int hIdxL = (int)Math.floor(hP/hRes);
-				int oVzIdxL = (int)Math.floor(oVzP/oVRes);
-				int iVzIdxL = (int)Math.floor(iVzP/iVRes);
+				int oVyIdxL = (int)Math.floor(oVyP/oVRes);
+				int iVyIdxL = (int)Math.floor(iVyP/iVRes);
 				for(int i=0;i<=1;i++)
 				{
 					int hIdx = (i==0? hIdxL : hIdxL+1);
 					int hIdxP= hIdx< -nh? -nh: (hIdx>nh? nh : hIdx);			
 					for(int j=0;j<=1;j++)
 					{
-						int oVzIdx = (j==0? oVzIdxL : oVzIdxL+1);
-						int oVzIdxP= oVzIdx<-noV? -noV: (oVzIdx>noV? noV : oVzIdx);
+						int oVyIdx = (j==0? oVyIdxL : oVyIdxL+1);
+						int oVyIdxP= oVyIdx<-noVy? -noVy: (oVyIdx>noVy? noVy : oVyIdx);
 						for(int k=0;k<=1;k++)
 						{
-							int iVzIdx = (k==0? iVzIdxL : iVzIdxL+1);
-							int iVzIdxP= iVzIdx<-niV? -niV: (iVzIdx>niV? niV : iVzIdx);
+							int iVyIdx = (k==0? iVyIdxL : iVyIdxL+1);
+							int iVyIdxP= iVyIdx<-niVy? -niVy: (iVyIdx>niVy? niVy : iVyIdx);
 							
-							ACASXState nextState= new ACASXState(hIdxP, oVzIdxP, iVzIdxP, tP, raP);
-							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVzIdx-oVzP/oVRes))*(1-Math.abs(iVzIdx-iVzP/iVRes));
+							ACASXState nextState= new ACASXState( tP,hIdxP, oVyIdxP, iVyIdxP, raP);
+							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVyIdx-oVyP/oVRes))*(1-Math.abs(iVyIdx-iVyP/iVRes));
 							nextStateMapProbabilities.add(new SimpleEntry<ACASXState, Double>(nextState,probability) );
 						}
 					}
@@ -313,40 +311,40 @@ public class ACASXMDP
 		double accel=ACASXUtils.getActionA(actionCode);
 		ArrayList<AbstractMap.SimpleEntry<Integer, Double>> nextStateMapProbabilities = new ArrayList<>();
 		
-		if( (accel>0 && targetV>state.getoVz() && state.getoVz()<UPPER_VZ)
-				|| (accel<0 && targetV<state.getoVz() && state.getoVz()>-UPPER_VZ))
+		if( (accel>0 && targetV>state.getoVy() && state.getoVy()<UPPER_VY)
+				|| (accel<0 && targetV<state.getoVy() && state.getoVy()>-UPPER_VY))
 		{// own aircraft follows a RA other than COC			
 			
 			for(Tuple<Double, Double, Double> sigmaPoint : sigmaPointsA)
 			{
-				double oAz=accel;
-				double iAz=sigmaPoint.y;
+				double oAy=accel;
+				double iAy=sigmaPoint.y;
 				double sigmaP=sigmaPoint.z;
 				
-				double hP= state.getH()+ (state.getiVz()-state.getoVz()) + 0.5*(iAz-oAz);
-				double oVzP= Math.max(-UPPER_VZ, Math.min(UPPER_VZ, state.getoVz()+oAz));
-				double iVzP= Math.max(-UPPER_VZ, Math.min(UPPER_VZ, state.getiVz()+iAz));
+				double hP= state.getH()+ (state.getiVy()-state.getoVy()) + 0.5*(iAy-oAy);
+				double oVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getoVy()+oAy));
+				double iVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getiVy()+iAy));
 				int tP=state.getT()-1;
 				int raP=actionCode;
 				
 				int hIdxL = (int)Math.floor(hP/hRes);
-				int oVzIdxL = (int)Math.floor(oVzP/oVRes);
-				int iVzIdxL = (int)Math.floor(iVzP/iVRes);
+				int oVyIdxL = (int)Math.floor(oVyP/oVRes);
+				int iVyIdxL = (int)Math.floor(iVyP/iVRes);
 				for(int i=0;i<=1;i++)
 				{
 					int hIdx = (i==0? hIdxL : hIdxL+1);
 					int hIdxP= hIdx< -nh? -nh: (hIdx>nh? nh : hIdx);			
 					for(int j=0;j<=1;j++)
 					{
-						int oVzIdx = (j==0? oVzIdxL : oVzIdxL+1);
-						int oVzIdxP= oVzIdx<-noV? -noV: (oVzIdx>noV? noV : oVzIdx);
+						int oVyIdx = (j==0? oVyIdxL : oVyIdxL+1);
+						int oVyIdxP= oVyIdx<-noVy? -noVy: (oVyIdx>noVy? noVy : oVyIdx);
 						for(int k=0;k<=1;k++)
 						{
-							int iVzIdx = (k==0? iVzIdxL : iVzIdxL+1);
-							int iVzIdxP= iVzIdx<-niV? -niV: (iVzIdx>niV? niV : iVzIdx);
+							int iVyIdx = (k==0? iVyIdxL : iVyIdxL+1);
+							int iVyIdxP= iVyIdx<-niVy? -niVy: (iVyIdx>niVy? niVy : iVyIdx);
 							
-							ACASXState nextState= new ACASXState(hIdxP, oVzIdxP, iVzIdxP, tP, raP);
-							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVzIdx-oVzP/oVRes))*(1-Math.abs(iVzIdx-iVzP/iVRes));
+							ACASXState nextState= new ACASXState(tP, hIdxP, oVyIdxP, iVyIdxP, raP);
+							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVyIdx-oVyP/oVRes))*(1-Math.abs(iVyIdx-iVyP/iVRes));
 							nextStateMapProbabilities.add(new SimpleEntry<Integer, Double>(nextState.getOrder(),probability) );
 						}
 					}
@@ -359,34 +357,34 @@ public class ACASXMDP
 		{				
 			for(Tuple<Double, Double, Double> sigmaPoint : sigmaPointsB)
 			{
-				double oAz=sigmaPoint.x;
-				double iAz=sigmaPoint.y;
+				double oAy=sigmaPoint.x;
+				double iAy=sigmaPoint.y;
 				double sigmaP=sigmaPoint.z;
 				
-				double hP= state.getH()+ (state.getiVz()-state.getoVz()) + 0.5*(iAz-oAz);
-				double oVzP= Math.max(-UPPER_VZ, Math.min(UPPER_VZ, state.getoVz()+oAz));
-				double iVzP= Math.max(-UPPER_VZ, Math.min(UPPER_VZ, state.getiVz()+iAz));
+				double hP= state.getH()+ (state.getiVy()-state.getoVy()) + 0.5*(iAy-oAy);
+				double oVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getoVy()+oAy));
+				double iVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getiVy()+iAy));
 				int tP=state.getT()-1;
 				int raP=actionCode;
 
 				int hIdxL = (int)Math.floor(hP/hRes);
-				int oVzIdxL = (int)Math.floor(oVzP/oVRes);
-				int iVzIdxL = (int)Math.floor(iVzP/iVRes);
+				int oVyIdxL = (int)Math.floor(oVyP/oVRes);
+				int iVyIdxL = (int)Math.floor(iVyP/iVRes);
 				for(int i=0;i<=1;i++)
 				{
 					int hIdx = (i==0? hIdxL : hIdxL+1);
 					int hIdxP= hIdx< -nh? -nh: (hIdx>nh? nh : hIdx);			
 					for(int j=0;j<=1;j++)
 					{
-						int oVzIdx = (j==0? oVzIdxL : oVzIdxL+1);
-						int oVzIdxP= oVzIdx<-noV? -noV: (oVzIdx>noV? noV : oVzIdx);
+						int oVyIdx = (j==0? oVyIdxL : oVyIdxL+1);
+						int oVyIdxP= oVyIdx<-noVy? -noVy: (oVyIdx>noVy? noVy : oVyIdx);
 						for(int k=0;k<=1;k++)
 						{
-							int iVzIdx = (k==0? iVzIdxL : iVzIdxL+1);
-							int iVzIdxP= iVzIdx<-niV? -niV: (iVzIdx>niV? niV : iVzIdx);
+							int iVyIdx = (k==0? iVyIdxL : iVyIdxL+1);
+							int iVyIdxP= iVyIdx<-niVy? -niVy: (iVyIdx>niVy? niVy : iVyIdx);
 							
-							ACASXState nextState= new ACASXState(hIdxP, oVzIdxP, iVzIdxP, tP, raP);
-							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVzIdx-oVzP/oVRes))*(1-Math.abs(iVzIdx-iVzP/iVRes));
+							ACASXState nextState= new ACASXState(hIdxP, oVyIdxP, iVyIdxP, tP, raP);
+							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVyIdx-oVyP/oVRes))*(1-Math.abs(iVyIdx-iVyP/iVRes));
 							nextStateMapProbabilities.add(new SimpleEntry<Integer, Double>(nextState.getOrder(),probability) );
 						}
 					}
@@ -420,20 +418,26 @@ public class ACASXMDP
 	{
 		if(actionCode==-1)//"Loop"
 		{
+//			System.out.println(state+"**********");
+			if(Math.abs(state.getH())<100)
+			{//NMAC
+//				System.out.println(state+"**********");
+				return -10000;
+			}
 			return 0;
 		}
-		
-		if(Math.abs(state.getH())<100 && state.getT()<=1)
-		{//NMAC
-			return -10000;
-		}
+//		if(Math.abs(state.getH())<100 && state.getT()==1)
+//		{//NMAC
+//			return -10000;
+//		}
+	
 		if(actionCode==1)
 		{
-			if(state.getoVz()>0)
+			if(state.getoVy()>0)
 			{
 				return -50;
 			}
-			else if(state.getoVz()<0)
+			else if(state.getoVy()<0)
 			{
 				return -100;
 			}
@@ -441,11 +445,11 @@ public class ACASXMDP
 		}
 		if(actionCode==2)
 		{
-			if(state.getoVz()>0)
+			if(state.getoVy()>0)
 			{
 				return -100;
 			}
-			else if(state.getoVz()<0)
+			else if(state.getoVy()<0)
 			{
 				return -50;
 			}

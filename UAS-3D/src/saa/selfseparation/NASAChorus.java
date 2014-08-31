@@ -6,7 +6,6 @@ package saa.selfseparation;
 import gov.nasa.larcfm.Chorus.Chorus;
 import modeling.SAAModel;
 import modeling.uas.UAS;
-import modeling.uas.UASVelocity;
 import sim.engine.SimState;
 import sim.util.Double2D;
 import sim.util.Double3D;

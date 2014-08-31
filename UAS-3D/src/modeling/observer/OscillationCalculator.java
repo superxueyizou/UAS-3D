@@ -5,7 +5,6 @@ import modeling.env.Constants;
 import modeling.uas.UAS;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.Double2D;
 import sim.util.Double3D;
 
 

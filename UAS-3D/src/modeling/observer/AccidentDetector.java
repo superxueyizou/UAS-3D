@@ -8,8 +8,6 @@ import modeling.env.Constants;
 import modeling.uas.UAS;
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.Bag;
-import sim.util.Double2D;
 import sim.util.Double3D;
 import tools.CONFIGURATION;
 
@@ -109,7 +107,7 @@ public class AccidentDetector implements Constants,Steppable
 	{	
 		double deltaHori=Math.pow((uas1.getLocation().x-uas2.getLocation().x),2)+Math.pow((uas1.getLocation().z-uas2.getLocation().z),2);
 		double deltaVert=Math.abs(uas1.getLocation().y-uas2.getLocation().y);	
-		return (deltaHori<=500)&&(deltaVert<=100);		
+		return (deltaHori<=500*500)&&(deltaVert<=100);		
 	}
 	
 

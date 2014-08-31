@@ -3,31 +3,31 @@ package saa.collsionavoidance.mdpLite;
 public class ACASXState
 {
 	private final double h;
-	private final double oVz;
-	private final double iVz;
+	private final double oVy;
+	private final double iVy;
 	private final int t;
 	private final int ra;
 	private final int hashCode;
 	private final int order;
 	
-	public ACASXState(int hIdx, int oVzIdx, int iVzIdx, int tIdx, int raIdx)
+	public ACASXState(int tIdx,int hIdx, int oVyIdx, int iVyIdx, int raIdx)
 	{ 
 
-		this.h= ACASXMDP.hRes*hIdx;
-		this.oVz= ACASXMDP.oVRes*oVzIdx;
-		this.iVz = ACASXMDP.iVRes*iVzIdx;
 		this.t= tIdx;
+		this.h= ACASXMDP.hRes*hIdx;
+		this.oVy= ACASXMDP.oVRes*oVyIdx;
+		this.iVy = ACASXMDP.iVRes*iVyIdx;		
 		this.ra = raIdx;	
 		
 		int a= hIdx +ACASXMDP.nh;
-		int b= oVzIdx +ACASXMDP.noV;		
-		int c= iVzIdx +ACASXMDP.niV;
+		int b= oVyIdx +ACASXMDP.noVy;		
+		int c= iVyIdx +ACASXMDP.niVy;
 
-		this.order=a*(2*ACASXMDP.noV+1)*(2*ACASXMDP.niV+1)*(ACASXMDP.nt+1)*(ACASXMDP.nra)
-				+ b*(2*ACASXMDP.niV+1)*(ACASXMDP.nt+1)*(ACASXMDP.nra)
-				+ c*(ACASXMDP.nt+1)*(ACASXMDP.nra)
-				+ t*(ACASXMDP.nra) 
-				+ ra;
+		this.order=	  t*(2*ACASXMDP.nh+1)*(2*ACASXMDP.noVy+1)*(2*ACASXMDP.niVy+1)*(ACASXMDP.nra)
+					+ a*(2*ACASXMDP.noVy+1)*(2*ACASXMDP.niVy+1)*(ACASXMDP.nra)
+					+ b*(2*ACASXMDP.niVy+1)*(ACASXMDP.nra)
+					+ c*(ACASXMDP.nra)				
+					+ ra;
 
 		this.hashCode=order;
 	}
@@ -38,14 +38,14 @@ public class ACASXState
 
 
 
-	public double getoVz() {
-		return oVz;
+	public double getoVy() {
+		return oVy;
 	}
 
 
 
-	public double getiVz() {
-		return iVz;
+	public double getiVy() {
+		return iVy;
 	}
 
 
@@ -70,10 +70,10 @@ public class ACASXState
 		if(obj !=null && obj.getClass()==ACASXState.class)
 		{
 			ACASXState state = (ACASXState)obj;
-			if(this.getH()==state.getH()
-					&& this.getoVz()==state.getoVz()
-					&& this.getiVz() == state.getiVz()
-					&& this.getT()==state.getT()
+			if(this.getT()==state.getT()
+					&&this.getH()==state.getH()
+					&& this.getoVy()==state.getoVy()
+					&& this.getiVy() == state.getiVy()					
 					&& this.getRa()==state.getRa())
 			{
 				return true;
@@ -89,7 +89,7 @@ public class ACASXState
 	
 	public String toString()
 	{
-		return "("+h+","+oVz+","+iVz+","+t+","+ra+")";
+		return "("+t+","+h+","+oVy+","+iVy+","+ra+")";
 	}
 
 	public int getOrder() {

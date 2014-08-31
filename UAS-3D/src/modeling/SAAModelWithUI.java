@@ -15,7 +15,6 @@ import sim.display.GUIState;
 import sim.display3d.Display3D;
 import sim.engine.SimState;
 import sim.portrayal.Inspector;
-import sim.portrayal3d.SimplePortrayal3D;
 import sim.portrayal3d.continuous.ContinuousPortrayal3D;
 import sim.portrayal3d.simple.BranchGroupPortrayal3D;
 import sim.portrayal3d.simple.SpherePortrayal3D;

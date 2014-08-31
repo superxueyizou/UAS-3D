@@ -3,7 +3,6 @@ package modeling;
 import modeling.encountergenerator.HeadOnGenerator;
 import modeling.encountergenerator.SelfGenerator;
 import modeling.uas.UAS;
-import sim.util.Double2D;
 import sim.util.Double3D;
 import tools.CONFIGURATION;
 /**
@@ -26,6 +25,8 @@ public class SimInitializer
 		double selfLocX;
 		double selfLocY;
 		double selfLocZ;
+		
+		double alertTime=21;
 
 		selfLocX= - CONFIGURATION.worldX/2;
     	selfLocY=0;
@@ -54,7 +55,7 @@ public class SimInitializer
 		    		double offsetY = CONFIGURATION.headOnOffsetY;		
 		    		double offsetZ = CONFIGURATION.headOnOffsetZ;	
 		    		
-		    		Double3D location = new Double3D(selfLocX+21*(CONFIGURATION.selfVx+CONFIGURATION.headOnVx), selfLocY+offsetY, selfLocZ+offsetZ);
+		    		Double3D location = new Double3D(selfLocX+alertTime*(CONFIGURATION.selfVx+CONFIGURATION.headOnVx), selfLocY+offsetY, selfLocZ+offsetZ);
 		    		new HeadOnGenerator(state, location,vx, vy, vz).execute();	  			    	
 		    	}
 	    	}
@@ -66,7 +67,7 @@ public class SimInitializer
 	    		double offsetY = CONFIGURATION.headOnOffsetY;
 	    		double offsetZ = CONFIGURATION.headOnOffsetZ;
 	    			    		
-	    		Double3D location = new Double3D(selfLocX+21*(CONFIGURATION.selfVx+CONFIGURATION.headOnVx), selfLocY+offsetY, selfLocZ+offsetZ);
+	    		Double3D location = new Double3D(selfLocX+alertTime*(CONFIGURATION.selfVx+CONFIGURATION.headOnVx), selfLocY+offsetY, selfLocZ+offsetZ);
 	    		new HeadOnGenerator(state,location,vx, vy, vz).execute();		    		
 	    	}	    
 	    }	

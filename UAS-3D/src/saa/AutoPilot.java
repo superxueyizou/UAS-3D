@@ -1,6 +1,5 @@
 package saa;
 
-import saa.collsionavoidance.mdpLite.ACASXUtils;
 import saa.selfseparation.ChorusResData;
 import sim.engine.SimState;
 import sim.engine.Steppable;
@@ -170,8 +169,8 @@ public class AutoPilot implements Steppable
 	private Waypoint executeActionCode(int actionCode)
 	{
 		Waypoint wp = new Waypoint(state.getNewID(), null);
-		double ay=ACASXUtils.getActionA(actionCode);
-		double targetV= ACASXUtils.getActionV(actionCode);
+		double ay=hostUAS.getCaa().getActionA(actionCode);
+		double targetV= hostUAS.getCaa().getActionV(actionCode);
 		double x;
 		double y;
 		double z;

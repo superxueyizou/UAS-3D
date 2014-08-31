@@ -14,14 +14,12 @@ public class ACASXGen
 	 */
 	public static void main(String[] args)
 	{
-		// TODO Auto-generated method stub
 		System.out.println("hi!Process starts...");
 		long startTime = System.currentTimeMillis();
 		ACASXMDP mdp = new ACASXMDP();
 		long time1 = System.currentTimeMillis();
 		System.out.println("MDP building Done! The running time is "+ (time1-startTime)/1000 +" senconds.");
 		ValueIteration vi = new ValueIteration(mdp, 1.0,0.5);
-//		ValueIterationMemoization vi = new ValueIterationMemoization(mdp, 1.0,0.5);
 		long midTime = System.currentTimeMillis();
 		System.out.println("Value Iteration Done! The running time is "+ (midTime-time1)/1000 +" senconds.");
 		vi.storeQValues();
