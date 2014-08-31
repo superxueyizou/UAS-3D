@@ -26,7 +26,7 @@ public class SimInitializer
 		double selfLocY;
 		double selfLocZ;
 		
-		double alertTime=21;
+		double alertTime=35;
 
 		selfLocX= - CONFIGURATION.worldX/2;
     	selfLocY=0;

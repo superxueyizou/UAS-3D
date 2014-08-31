@@ -17,12 +17,12 @@ import sim.util.Double2D;
  */
 public class ACASX3DDTMC
 {
-	public static final int nr = 40;//40
-	public static final int nrv= 100;//100
+	public static final int nr = 61;//40
+	public static final int nrv= 61;//100
 	public static final int ntheta= 36;//36
 	
-	public static final double UPPER_R=20000.0;
-	public static final double UPPER_RV=1000.0;
+	public static final double UPPER_R=12200;//20000
+	public static final double UPPER_RV=610;//1000
 	public static final double UPPER_THETA=180.0;
 	
 	public static final double rRes = UPPER_R/nr;
