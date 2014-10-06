@@ -5,9 +5,10 @@ package dominant;
 
 import javax.swing.JFrame;
 
+import configuration.SAAConfigurator;
+
 import modeling.SAAModelWithUI;
 import sim.display.Console;
-import ui.SAAConfigurator;
 
 /**
  * @author xueyi
@@ -31,8 +32,6 @@ public class SimulationWithUI
 		SAAConfigurator configurator = new SAAConfigurator(saaModelWithUI.state, saaModelWithUI);
 		configurator.setBounds(1580, 380, 340,784); 
 		configurator.setVisible(true);
-		configurator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);		
-		
-		
+		configurator.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);				
     }
 }

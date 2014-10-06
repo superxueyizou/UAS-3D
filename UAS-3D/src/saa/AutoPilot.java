@@ -94,22 +94,26 @@ public class AutoPilot implements Steppable
 		double vx=hostUAS.getVelocity().x;
 		double vy=hostUAS.getVelocity().y;
 		double vz=hostUAS.getVelocity().z;
-		double ay = SDY * state.random.nextGaussian()*(state.random.nextBoolean()?1:-1);
-		if(vy+ay>uasPerformance.getMaxClimb())
-		{
-			ay=uasPerformance.getMaxClimb()-vy;
-		}
-		else if(vy+ay<-uasPerformance.getMaxDescent())
-		{
-			ay=-uasPerformance.getMaxDescent()-vy;
-		}
+				
+		double x = hostUAS.getLocation().x;				
+		double y = hostUAS.getLocation().y;
+		double z = hostUAS.getLocation().z;
 		
-		double x = hostUAS.getLocation().x + vx;				
-		double y= hostUAS.getLocation().y + vy + 0.5*ay;
-		double z= hostUAS.getLocation().z;
+		double theta=targetAngle;
+		final double sinTheta = Math.sin(theta);
+        final double cosTheta = Math.cos(theta);
+        
+        double vxP=cosTheta * vx + -sinTheta * vz;
+        double vyP=vy;
+        double vzP= sinTheta * vx + cosTheta * vz;
+        
+		double xP = x + vxP;				
+		double yP = y + vyP;
+		double zP = z + vzP;
+       
 		hostUAS.setOldVelocity(new Double3D(vx,vy,vz));
-		hostUAS.setVelocity(new Double3D(vx, vy+ay,vz));
-		wp.setLocation(new Double3D(x , y,z));		
+		hostUAS.setVelocity(new Double3D(vxP, vyP,vzP));
+		wp.setLocation(new Double3D(xP , yP, zP));		
 		return wp;
 		
 	}

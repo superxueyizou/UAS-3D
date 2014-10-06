@@ -76,6 +76,7 @@ public class NASAChorus extends SelfSeparationAlgorithm
 		
 		//Using Kinematic Resolution
 		int res = chorus.resolutionKinematic();
+		ChorusResData resData=new ChorusResData();
 		if (res > 0)
 		{
 //			chorus.printResolutions();
@@ -84,9 +85,10 @@ public class NASAChorus extends SelfSeparationAlgorithm
 				if (chorus.trkFeasible() >= 0) 
 				{
 					Double2D gs=new Double2D(hostUAS.getVelocity().x, hostUAS.getVelocity().z);
-					System.out.print("Heading is "+gs.angle()+" [deg]    ");
+					System.out.print("Heading is "+gs.angle()+" [rad]    ");
 					System.out.println("Track solution is "+chorus.trkOnly()+" [deg]");
-					hostUAS.getAp().setActionCode(0);	
+					resData.setTargetGs(Math.toRadians(chorus.trkOnly()));
+					hostUAS.getAp().setSsData(resData);	
 					return;
 				}
 				else

@@ -1,10 +1,9 @@
 package modeling;
 
-import modeling.encountergenerator.HeadOnGenerator;
-import modeling.encountergenerator.SelfGenerator;
+import modeling.encountergenerator.IntruderFactory;
+import modeling.encountergenerator.OwnshipGenerator;
 import modeling.uas.UAS;
-import sim.util.Double3D;
-import tools.CONFIGURATION;
+import configuration.Configuration;
 /**
  *
  * @author Xueyi Zou
@@ -13,65 +12,28 @@ import tools.CONFIGURATION;
  */
 public class SimInitializer
 {
-	public SAAModel state;
+	private SAAModel state;	
+	private Configuration config;
 
 	public SimInitializer(SAAModel simState)
 	{
 		state = simState;
+		config= Configuration.getInstance();
 	}
 	
-	public  void generateSimulation()
+	public void generateSimulation()
 	{	
-		double selfLocX;
-		double selfLocY;
-		double selfLocZ;
+		UAS ownship = new OwnshipGenerator(state,"ownship",-0.4*config.globalConfig.worldX, 0,0, config.ownshipConfig).execute();
+		state.uasBag.add(ownship);
+		state.allEntities.add(ownship);
 		
-		double alertTime=35;
-
-		selfLocX= - CONFIGURATION.worldX/2;
-    	selfLocY=0;
-    	selfLocZ=0;
-    	if(state.runningWithUI)
-    	{
-    		double vx = CONFIGURATION.selfVx;//Math.abs(CONFIGURATION.selfVx*(1+state.random.nextGaussian()));
-    		double vy = CONFIGURATION.selfVy;//Math.abs(CONFIGURATION.selfVy*(1+state.random.nextGaussian()));
-    		double vz = CONFIGURATION.selfVz;
-        	new SelfGenerator(state,selfLocX, selfLocY,selfLocZ, vx, vy, vz).execute();
-    	}
-    	else
-    	{
-        	new SelfGenerator(state,selfLocX, selfLocY,selfLocZ, CONFIGURATION.selfVx, CONFIGURATION.selfVy, CONFIGURATION.selfVz).execute();
-    	}
-	
-	    if(CONFIGURATION.headOnSelected==1)
-	    {  		    	
-	    	if(state.runningWithUI)
-	    	{
-		    	for(int i=0; i<CONFIGURATION.headOnIntruders; i++)
-		    	{		    		
-		    		double vx =-CONFIGURATION.headOnVx;
-		    		double vy =CONFIGURATION.headOnVy;
-		    		double vz =CONFIGURATION.headOnVz;
-		    		double offsetY = CONFIGURATION.headOnOffsetY;		
-		    		double offsetZ = CONFIGURATION.headOnOffsetZ;	
-		    		
-		    		Double3D location = new Double3D(selfLocX+alertTime*(CONFIGURATION.selfVx+CONFIGURATION.headOnVx), selfLocY+offsetY, selfLocZ+offsetZ);
-		    		new HeadOnGenerator(state, location,vx, vy, vz).execute();	  			    	
-		    	}
-	    	}
-	    	else
-	    	{
-	    		double vx =-CONFIGURATION.headOnVx;
-	    		double vy =CONFIGURATION.headOnVy;
-	    		double vz =CONFIGURATION.headOnVz;
-	    		double offsetY = CONFIGURATION.headOnOffsetY;
-	    		double offsetZ = CONFIGURATION.headOnOffsetZ;
-	    			    		
-	    		Double3D location = new Double3D(selfLocX+alertTime*(CONFIGURATION.selfVx+CONFIGURATION.headOnVx), selfLocY+offsetY, selfLocZ+offsetZ);
-	    		new HeadOnGenerator(state,location,vx, vy, vz).execute();		    		
-	    	}	    
-	    }	
-	
+		for(String intruderAlias: config.intrudersConfig.keySet())
+		{
+			UAS intruder=IntruderFactory.generateIntruder(state, ownship, intruderAlias,config.intrudersConfig.get(intruderAlias));
+			state.uasBag.add(intruder);
+			state.allEntities.add(intruder);
+		}
+	 	
 	    for(Object o : state.uasBag)
 	    {
 	    	UAS uas = (UAS)o;

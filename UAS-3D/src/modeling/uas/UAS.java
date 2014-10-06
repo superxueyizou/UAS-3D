@@ -22,6 +22,8 @@ public class UAS extends Entity
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private String alias;
+	
 	//parameters for subsystems	
 	private SensorSet sensorSet;
 	private CollisionAvoidanceAlgorithm caa;
@@ -305,5 +307,13 @@ public class UAS extends Entity
 			state.kill();
 		}
 	 }
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
 
 }

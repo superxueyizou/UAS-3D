@@ -7,7 +7,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import tools.CONFIGURATION;
 import tools.UTILS;
 import ec.*;
 import ec.util.*;
@@ -68,20 +67,20 @@ public class Simulation
 		
 		if (confirmationResult == 0 )
 		{
-			String str = UTILS.readLastLine(new File(fileName+"Statics.stat"), "utf-8").trim();
-			String[] pArr= str.split(" ");
-			//System.out.println(pArr[3]);
-					
-			CONFIGURATION.selfStdDevY=Double.parseDouble(pArr[0]);			
-			CONFIGURATION.selfVx= Double.parseDouble(pArr[1]);
-			CONFIGURATION.selfVy=Double.parseDouble(pArr[2]);
-			CONFIGURATION.headOnOffsetY=Double.parseDouble(pArr[3]);
-			CONFIGURATION.headOnStdDevY=Double.parseDouble(pArr[4]);
-			CONFIGURATION.headOnVx=Double.parseDouble(pArr[5]);	
-			CONFIGURATION.headOnVy=Double.parseDouble(pArr[6]);			
-    		
-			System.out.println("\nRecurrenceWithGUI");
-			SimulationWithUI.main(null);
+//			String str = UTILS.readLastLine(new File(fileName+"Statics.stat"), "utf-8").trim();
+//			String[] pArr= str.split(" ");
+//			//System.out.println(pArr[3]);
+//					
+//			CONFIGURATION.selfStdDevY=Double.parseDouble(pArr[0]);			
+//			CONFIGURATION.selfVx= Double.parseDouble(pArr[1]);
+//			CONFIGURATION.selfVy=Double.parseDouble(pArr[2]);
+//			CONFIGURATION.headOnOffsetY=Double.parseDouble(pArr[3]);
+//			CONFIGURATION.headOnStdDevY=Double.parseDouble(pArr[4]);
+//			CONFIGURATION.headOnVx=Double.parseDouble(pArr[5]);	
+//			CONFIGURATION.headOnVy=Double.parseDouble(pArr[6]);			
+//    		
+//			System.out.println("\nRecurrenceWithGUI");
+//			SimulationWithUI.main(null);
 		}	
 		else if (confirmationResult == 2 )
 		{

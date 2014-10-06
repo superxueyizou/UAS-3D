@@ -1,5 +1,6 @@
 package modeling;
 
+import configuration.Configuration;
 import modeling.env.Entity;
 import modeling.observer.AccidentDetector;
 import modeling.observer.OscillationCalculator;
@@ -9,7 +10,6 @@ import modeling.uas.UAS;
 import sim.util.*;
 import sim.field.continuous.*;
 import sim.engine.*;
-import tools.CONFIGURATION;
 
 public class SAAModel extends SimState
 {
@@ -17,6 +17,8 @@ public class SAAModel extends SimState
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static Configuration config= Configuration.getInstance();
 	
 	public boolean runningWithUI = false; 
 	
@@ -26,6 +28,7 @@ public class SAAModel extends SimState
     private int newID = 0;	
     public String information="no information now";
 
+    public Continuous2D xzView;
     public Continuous3D environment3D;
 	
     public AccidentDetector aDetector= new AccidentDetector();
@@ -44,6 +47,7 @@ public class SAAModel extends SimState
     {
 		super(seed);
 		environment3D = new Continuous3D(1.0, widthX, heightY, lengthZ);
+		xzView = new Continuous2D(1.0,widthX,lengthZ);
 		runningWithUI = UI;				
 	}    
 		
@@ -52,6 +56,7 @@ public class SAAModel extends SimState
 	{
 		super.start();	
 		environment3D.clear();
+        xzView.clear();
 	
 		loadEntities();
 		scheduleEntities();			
@@ -70,7 +75,7 @@ public class SAAModel extends SimState
 		allEntities.clear();
 
 		environment3D.clear(); //clear the environment3D
-
+		xzView.clear();
 	}
 	
 	public void finish()
@@ -104,9 +109,14 @@ public class SAAModel extends SimState
 		for(int i = 0; i < allEntities.size(); i++)
 		{
 			Entity e =(Entity) allEntities.get(i);
+			xzView.setObjectLocation(e, new Double2D(e.getLocation().x,e.getLocation().z).add(new Double2D(0.5*xzView.width,0.5*xzView.height)));
 			environment3D.setObjectLocation(e, e.getLocation());		
 		}
-		
+//		Bag a=xzView.getAllObjects();
+//		for(int i=0;i<a.size();i++)
+//		{
+//			System.out.println(((UAS)a.get(i)).getLocation());
+//		}
 	}
 	
 	
@@ -118,7 +128,7 @@ public class SAAModel extends SimState
 	{
 		//loop across all items in toSchedule and add them all to the schedule
 		int counter = 0;	
-		if (CONFIGURATION.collisionAvoidanceEnabler)
+		if (config.globalConfig.collisionAvoidanceEnabler)
 		{
 			for(int i = 0; i < uasBag.size(); i++, counter++)
 			{
@@ -127,7 +137,7 @@ public class SAAModel extends SimState
 			
 		}
 		
-		if (CONFIGURATION.selfSeparationEnabler)
+		if (config.globalConfig.selfSeparationEnabler)
 		{
 			for(int i = 0; i < uasBag.size(); i++, counter++)
 			{

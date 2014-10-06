@@ -2,24 +2,29 @@ package modeling;
 
 import java.awt.Color;
 import java.io.FileNotFoundException;
-
 import javax.media.j3d.Appearance;
 import javax.media.j3d.ColoringAttributes;
 import javax.swing.JFrame;
 import javax.vecmath.Color3f;
 
+import configuration.Configuration;
 import modeling.env.Waypoint;
 import modeling.uas.UAS;
 import sim.display.Controller;
+import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.display3d.Display3D;
 import sim.engine.SimState;
 import sim.portrayal.Inspector;
+import sim.portrayal.continuous.ContinuousPortrayal2D;
+import sim.portrayal.simple.CircledPortrayal2D;
+import sim.portrayal.simple.LabelledPortrayal2D;
+import sim.portrayal.simple.MovablePortrayal2D;
+import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal3d.continuous.ContinuousPortrayal3D;
 import sim.portrayal3d.simple.BranchGroupPortrayal3D;
 import sim.portrayal3d.simple.SpherePortrayal3D;
 import sim.portrayal3d.simple.WireFrameBoxPortrayal3D;
-import tools.CONFIGURATION;
 
 /**
  * A class for running a simulation with a UI, run to see a simulation with a UI
@@ -31,45 +36,57 @@ public class SAAModelWithUI extends GUIState
 {	
 	protected SimInitializer simInitializer; 
 	
-	public Display3D display3D;
-	public JFrame display3DFrame;	
+	public static Configuration config= Configuration.getInstance();
 	
 	private int displayFrameX;
 	private int displayFrameY;	
-
+	
+    public Display2D display;
+    public JFrame displayFrame;
+    ContinuousPortrayal2D xzViewPortrayal = new ContinuousPortrayal2D();
+	
+	public Display3D display3D;
+	public JFrame display3DFrame;	
 	ContinuousPortrayal3D environment3DPortrayal = new ContinuousPortrayal3D();
-	WireFrameBoxPortrayal3D wireFrameP;
+	WireFrameBoxPortrayal3D wireFrameP = new WireFrameBoxPortrayal3D(-0.8*config.globalConfig.worldX,-0.8*config.globalConfig.worldY,-0.8*config.globalConfig.worldZ,0.8*config.globalConfig.worldX,0.8*config.globalConfig.worldY,0.8*config.globalConfig.worldZ);
    
     public SAAModelWithUI(int UIWidth, int UIHight) 
     {   
-        super(new SAAModel(785945568, CONFIGURATION.worldX, CONFIGURATION.worldY, CONFIGURATION.worldZ, true)); 	
+        super(new SAAModel(785945568, config.globalConfig.worldX, config.globalConfig.worldY, config.globalConfig.worldZ, true)); 	
         this.displayFrameX=UIWidth;
         this.displayFrameY=UIHight;
     	simInitializer = new SimInitializer((SAAModel) state);
-    	 // build the box
-        wireFrameP = new WireFrameBoxPortrayal3D(-0.5*CONFIGURATION.worldX,-0.5*CONFIGURATION.worldY,-0.5*CONFIGURATION.worldZ,0.5*CONFIGURATION.worldX,0.5*CONFIGURATION.worldY,0.5*CONFIGURATION.worldZ);
-
     }
   
     
     public void init(Controller c)
     {
-        super.init(c);
-          
-        // make the display
-        display3D = new Display3D(CONFIGURATION.worldX,CONFIGURATION.worldY,this);           
-        display3D.scale(1.0 / CONFIGURATION.worldX);
-
+        super.init(c);     
+                 
+        // make the 3D display
+        display3D = new Display3D(config.globalConfig.worldX,config.globalConfig.worldY,this);           
+        display3D.scale(0.8 / config.globalConfig.worldX);
         display3DFrame = display3D.createFrame();
         display3DFrame.setTitle("SAA Simulation");
         c.registerFrame(display3DFrame);   // register the frame so it appears in the "Display" list
         display3DFrame.setVisible(true);
-        display3DFrame.setBounds(0, 0, displayFrameX, displayFrameY); //(new Dimension(1580, 1164))
-        
-		//adding the different layers to the display2D
+        display3DFrame.setBounds(0, 0, displayFrameX, displayFrameY); //(new Dimension(1580, 1164))        
+		//adding the different layers to the display3D
         display3D.attach(environment3DPortrayal, "Environment3D" );
         display3D.attach(wireFrameP, "WireFrame");
-//        display3D.rotateX(90);
+        
+        // make the 2D displayers
+        display = new Display2D(config.globalConfig.worldX,config.globalConfig.worldZ,this);
+        // turn off clipping
+        display.setClipping(false);
+        display.setBackdrop(Color.black);
+        display.setScale(0.02925714285714286);
+        displayFrame = display.createFrame();
+        displayFrame.setTitle("X-Z View");
+        c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
+        displayFrame.setVisible(false);            
+        displayFrame.setBounds(0, 0, displayFrameX/2,displayFrameY/2);
+        display.attach( xzViewPortrayal, "xzView" );
 
     }
 
@@ -103,9 +120,26 @@ public class SAAModelWithUI extends GUIState
 	{		
 		SAAModel simulation = (SAAModel) state;		
 		
+		  // tell the portrayals what to portray and how to portray them
+        xzViewPortrayal.setField(simulation.xzView );
+        xzViewPortrayal.setPortrayalForClass(UAS.class,
+            new MovablePortrayal2D(
+                new CircledPortrayal2D(
+                    new LabelledPortrayal2D(
+                        new OvalPortrayal2D(Color.white,120,true),
+                        120, "ooooooooo", Color.white, true),
+                    0, 150.0, Color.green, true)));
+        
+//        xzViewPortrayal.setPortrayalForClass(Waypoint.class, new OvalPortrayal2D(40.0));                                                
+        // reschedule the displayer
+        display.reset();        
+        // redraw the display
+        display.repaint();
+        
+        
+		
 		// tell the portrayals what to portray and how to portray them
 		environment3DPortrayal.setField( simulation.environment3D );
-
 		javax.media.j3d.BranchGroup bg=null;
 		try {
 			bg= BranchGroupPortrayal3D.getBranchGroupForResource(BranchGroupPortrayal3D.class, "shapes/MQ-27.obj");
@@ -197,7 +231,12 @@ public class SAAModelWithUI extends GUIState
 
     public void quit()
     {
-        super.quit();        
+        super.quit();      
+        
+        if (displayFrame!=null) displayFrame.dispose();
+        displayFrame = null;
+        display = null;
+        
         if (display3DFrame!=null) display3DFrame.dispose();
         display3DFrame = null;
         display3D = null;

@@ -12,7 +12,6 @@ public class UASPerformance
 	private double stdDevZ;
 	private double maxSpeed;
 	private double minSpeed;
-	private double prefSpeed;
 	private double maxClimb;
 	private double maxDescent;
 	private double maxTurning;
@@ -20,14 +19,13 @@ public class UASPerformance
 	private double maxDeceleration;
 	
 	
-	public UASPerformance(double stdDevX, double stdDevY,double stdDevZ,double maxUASSpeed, double minUASSpeed,double prefUASSpeed, double maxUASClimb, double maxUASDescent, double maxUASTurning, double maxUASAcceleration, double maxUASDeceleration)
+	public UASPerformance(double stdDevX, double stdDevY,double stdDevZ,double maxUASSpeed, double minUASSpeed, double maxUASClimb, double maxUASDescent, double maxUASTurning, double maxUASAcceleration, double maxUASDeceleration)
 	{
 		this.setStdDevX(stdDevX);
 		this.setStdDevY(stdDevY);
 		this.setStdDevZ(stdDevZ);
 		maxSpeed = maxUASSpeed;
 		minSpeed = minUASSpeed;
-		prefSpeed = prefUASSpeed;
 		maxClimb = maxUASClimb;
 		maxDescent = maxUASDescent;
 		maxTurning = maxUASTurning;
@@ -69,14 +67,6 @@ public class UASPerformance
 
 	public void setMinSpeed(double minSpeed) {
 		this.minSpeed = minSpeed;
-	}
-	
-	public double getPrefSpeed() {
-		return prefSpeed;
-	}
-
-	public void setPrefSpeed(double prefSpeed) {
-		this.prefSpeed = prefSpeed;
 	}
 	
 	public double getMaxClimb() {

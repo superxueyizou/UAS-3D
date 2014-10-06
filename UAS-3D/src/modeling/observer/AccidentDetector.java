@@ -3,13 +3,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+
+import configuration.Configuration;
 import modeling.SAAModel;
 import modeling.env.Constants;
 import modeling.uas.UAS;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Double3D;
-import tools.CONFIGURATION;
 
 
 /**
@@ -55,7 +56,7 @@ public class AccidentDetector implements Constants,Steppable
 	@Override
 	public void step(SimState simState)
 	{
-		if(!CONFIGURATION.accidentDetectorEnabler)
+		if(!Configuration.getInstance().globalConfig.accidentDetectorEnabler)
 		{
 			return;
 		}

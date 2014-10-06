@@ -3,7 +3,7 @@
  */
 package dominant;
 
-import tools.CONFIGURATION;
+import tools.Configuration;
 import modeling.SAAModel;
 import modeling.SimInitializer;
 import modeling.uas.UAS;
@@ -25,6 +25,7 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	private Configuration config = Configuration.getInstance(); 
 
 	/* (non-Javadoc)
 	 * @see ec.simple.SimpleProblemForm#evaluate(ec.EvolutionState, ec.Individual, int, int)
@@ -48,13 +49,13 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
 		double headOnVx = ind2.genome[5];
 		double headOnVy = ind2.genome[6];				
 		
-		CONFIGURATION.selfStdDevY = selfStdDev;
-		CONFIGURATION.selfVx = selfVx;
-		CONFIGURATION.selfVy= selfVy;    		
-		CONFIGURATION.headOnOffsetY= headOnOffset;
-		CONFIGURATION.headOnStdDevY=headOnStdDev;    			
-		CONFIGURATION.headOnVx =headOnVx;
-		CONFIGURATION.headOnVy =headOnVy;
+		config.ownshipConfig.ownshipStdDevY = selfStdDev;
+		config.ownshipConfig.ownshipVx = selfVx;
+		config.ownshipConfig.ownshipVy= selfVy;    		
+//		CONFIGURATION.headOnOffsetY= headOnOffset;
+//		CONFIGURATION.headOnStdDevY=headOnStdDev;    			
+//		CONFIGURATION.headOnVx =headOnVx;
+//		CONFIGURATION.headOnVy =headOnVy;
 		
 		SAAModel simState= new SAAModel(785945568, CONFIGURATION.worldX, CONFIGURATION.worldY, CONFIGURATION.worldZ,false); 	
    		SimInitializer sBuilder = new SimInitializer(simState);

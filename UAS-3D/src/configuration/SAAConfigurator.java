@@ -1,7 +1,6 @@
-package ui;
+package configuration;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -14,12 +13,9 @@ import sim.engine.SimState;
 
 public class SAAConfigurator extends JFrame implements ActionListener
 {	
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+	private JPanel contentPane;	
+	
 	/**
 	 * Launch the application.
 	 */
@@ -53,26 +49,18 @@ public class SAAConfigurator extends JFrame implements ActionListener
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(0, 12, 326, 818);
 				
-		JPanel modelBuilderConfigPanel = new ModelBuilder(state, stateWithUI);
+		JPanel modelBuilderConfigPanel = new GlobalConfigurator(state, stateWithUI);
 		tabbedPane.addTab("ModelBuilder", null, modelBuilderConfigPanel, null);
 		modelBuilderConfigPanel.setLayout(null);
 		
-		JPanel selfConfigPanel = new Self();
-		tabbedPane.addTab("Self", null, selfConfigPanel, null);
+		JPanel selfConfigPanel = new OwnshipConfigurator();
+		tabbedPane.addTab("Own-ship", null, selfConfigPanel, null);
 		selfConfigPanel.setLayout(null);
 					
-		JPanel headOnPanel = new HeadOn();
-		tabbedPane.addTab("HeadOn", null, headOnPanel, null);
-		headOnPanel.setLayout(null);
-		
-//		JPanel crossingPanel = new Crossing();
-//		tabbedPane.addTab("Crossing", null, crossingPanel, null);
-//		crossingPanel.setLayout(null);
-//		
-//		JPanel tailApproachPanel = new TailApproach();
-//		tabbedPane.addTab("TailApproach", null, tailApproachPanel, null);
-//		tailApproachPanel.setLayout(null);
-		
+		JPanel intrudersPanel = new IntrudersConfigurator();
+		tabbedPane.addTab("Intruders", null, intrudersPanel, null);
+		intrudersPanel.setLayout(null);
+	
 		getContentPane().add(tabbedPane);
 		contentPane.add(tabbedPane);
 

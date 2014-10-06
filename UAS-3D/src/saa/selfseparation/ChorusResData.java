@@ -13,6 +13,26 @@ public class ChorusResData {
 		this.targetVs =targetVs;
 		this.targetAltitude =targetAltitude;
 	}
+	
+	public ChorusResData()
+	{
+	}
+
+	public void setTargetAngle(double targetAngle) {
+		this.targetAngle = targetAngle;
+	}
+
+	public void setTargetGs(double targetGs) {
+		this.targetGs = targetGs;
+	}
+
+	public void setTargetVs(double targetVs) {
+		this.targetVs = targetVs;
+	}
+
+	public void setTargetAltitude(double targetAltitude) {
+		this.targetAltitude = targetAltitude;
+	}
 
 	public double getTargetAngle() {
 		return targetAngle;
