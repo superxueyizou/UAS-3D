@@ -1,0 +1,98 @@
+# Copyright 2006 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+
+parent.0		= /home/viki/EclipseWorkspace/ECJ/ecj/ec/simple/simple.params
+stat.file = $RandMaxNMACStatics.stat
+stat.num-children = 1
+stat.child.0 = dominant.MyStatistics
+stat.child.0.file = $RandMaxNMACStatics2.csv
+pop.subpop.0.size = 500
+generations = 500
+
+pop.subpop.0.species		= ec.vector.FloatVectorSpecies
+pop.subpop.0.species.ind	= ec.vector.DoubleVectorIndividual
+pop.subpop.0.species.fitness 	= ec.simple.SimpleFitness	
+
+# the size of simulation parameters
+pop.subpop.0.species.genome-size	=15
+
+#self destination distance
+pop.subpop.0.species.min-gene.0 = 1015
+pop.subpop.0.species.max-gene.0 =1305
+# own uav's speed 
+pop.subpop.0.species.min-gene.1 =14.906
+pop.subpop.0.species.max-gene.1 =26.854
+
+# is head on
+pop.subpop.0.species.min-gene.2 = 0 
+pop.subpop.0.species.max-gene.2 = 1
+# head on offset   
+pop.subpop.0.species.min-gene.3 = 0 
+pop.subpop.0.species.max-gene.3 =17.4
+# is right side
+pop.subpop.0.species.min-gene.4 = 0 
+pop.subpop.0.species.max-gene.4 = +1 
+#head on intuder's speed
+pop.subpop.0.species.min-gene.5 =14.906
+pop.subpop.0.species.max-gene.5 =26.854
+
+# is crossing
+pop.subpop.0.species.min-gene.6 = 0 
+pop.subpop.0.species.max-gene.6 = 1
+# crossing encounterAngle  
+pop.subpop.0.species.min-gene.7 = 0
+pop.subpop.0.species.max-gene.7 = 3.14
+# crossing is-right-side
+pop.subpop.0.species.min-gene.8 = 0
+pop.subpop.0.species.max-gene.8 = 1
+# crossing intuder's speed
+pop.subpop.0.species.min-gene.9 = 14.906 
+pop.subpop.0.species.max-gene.9 = 26.854
+
+# is tail approach
+pop.subpop.0.species.min-gene.10 = 0 
+pop.subpop.0.species.max-gene.10 = 1
+# tail approach offset
+pop.subpop.0.species.min-gene.11 = 0 
+pop.subpop.0.species.max-gene.11 = 17.4 
+# tail approach is-right-side  
+pop.subpop.0.species.min-gene.12 = 0 
+pop.subpop.0.species.max-gene.12 = 1
+# tail approach intuder's speed
+pop.subpop.0.species.min-gene.13 = 14.906 
+pop.subpop.0.species.max-gene.13 = 26.854
+
+#select only one encounter
+pop.subpop.0.species.min-gene.14 = 1
+pop.subpop.0.species.max-gene.14 = 3
+
+pop.subpop.0.species.min-gene = 0
+pop.subpop.0.species.max-gene = 1305
+
+pop.subpop.0.species.crossover-type	= two
+pop.subpop.0.species.crossover-likelihood	= 1.0
+
+pop.subpop.0.species.mutation-prob	= 1.0
+pop.subpop.0.species.mutation-type= reset
+
+pop.subpop.0.species.mutation-type.2 = integer-reset
+pop.subpop.0.species.mutation-type.4 = integer-reset
+pop.subpop.0.species.mutation-type.6 = integer-reset
+pop.subpop.0.species.mutation-type.8 = integer-reset
+pop.subpop.0.species.mutation-type.10 = integer-reset
+pop.subpop.0.species.mutation-type.12 = integer-reset
+pop.subpop.0.species.mutation-type.14 = integer-reset
+pop.subpop.0.species.mutation-prob.14 = 0
+
+
+pop.subpop.0.species.pipe = ec.vector.breed.VectorMutationPipeline
+
+pop.subpop.0.species.pipe.source.0 = ec.vector.breed.VectorCrossoverPipeline
+
+pop.subpop.0.species.pipe.source.0.source.0 = ec.select.RandomSelection
+pop.subpop.0.species.pipe.source.0.source.1 = ec.select.RandomSelection
+#FitProportionateSelection
+
+
+eval.problem            = dominant.MaxNMAC

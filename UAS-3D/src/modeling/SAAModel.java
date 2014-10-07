@@ -13,12 +13,10 @@ import sim.engine.*;
 
 public class SAAModel extends SimState
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	public static Configuration config= Configuration.getInstance();
+	private static SAAModel state=null;
 	
 	public boolean runningWithUI = false; 
 	
@@ -43,7 +41,27 @@ public class SAAModel extends SimState
 	 * @param lengthZ the length of the simulation environment3D
 	 * @param UI pass true if the simulation is being run with a UI false if it is not.
 	 */
-	public SAAModel(long seed, double widthX, double heightY, double lengthZ, boolean UI)
+    public static SAAModel getInstance(long seed, double widthX, double heightY, double lengthZ, boolean UI)
+    {
+    	if(state==null)
+    	{
+    		state=new SAAModel(seed, widthX, heightY, lengthZ, UI);
+    	}
+    	
+    	return state;    	
+    }
+    
+    public static SAAModel getInstance()
+    {
+    	if(state==null)
+    	{
+    		throw new NullPointerException("A singleton of SAAModel has not yet existed!");
+    	}
+    	
+    	return state;    	
+    }
+
+	private SAAModel(long seed, double widthX, double heightY, double lengthZ, boolean UI)
     {
 		super(seed);
 		environment3D = new Continuous3D(1.0, widthX, heightY, lengthZ);

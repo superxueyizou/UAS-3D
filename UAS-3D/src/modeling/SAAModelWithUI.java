@@ -6,7 +6,6 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.ColoringAttributes;
 import javax.swing.JFrame;
 import javax.vecmath.Color3f;
-
 import configuration.Configuration;
 import modeling.env.Waypoint;
 import modeling.uas.UAS;
@@ -17,10 +16,6 @@ import sim.display3d.Display3D;
 import sim.engine.SimState;
 import sim.portrayal.Inspector;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
-import sim.portrayal.simple.CircledPortrayal2D;
-import sim.portrayal.simple.LabelledPortrayal2D;
-import sim.portrayal.simple.MovablePortrayal2D;
-import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal3d.continuous.ContinuousPortrayal3D;
 import sim.portrayal3d.simple.BranchGroupPortrayal3D;
 import sim.portrayal3d.simple.SpherePortrayal3D;
@@ -50,9 +45,12 @@ public class SAAModelWithUI extends GUIState
 	ContinuousPortrayal3D environment3DPortrayal = new ContinuousPortrayal3D();
 	WireFrameBoxPortrayal3D wireFrameP = new WireFrameBoxPortrayal3D(-0.8*config.globalConfig.worldX,-0.8*config.globalConfig.worldY,-0.8*config.globalConfig.worldZ,0.8*config.globalConfig.worldX,0.8*config.globalConfig.worldY,0.8*config.globalConfig.worldZ);
    
+	BranchGroupPortrayal3D bp=null;
+	SpherePortrayal3D sp=null;
+	
     public SAAModelWithUI(int UIWidth, int UIHight) 
     {   
-        super(new SAAModel(785945568, config.globalConfig.worldX, config.globalConfig.worldY, config.globalConfig.worldZ, true)); 	
+        super(SAAModel.getInstance(785945568, config.globalConfig.worldX, config.globalConfig.worldY, config.globalConfig.worldZ, true)); 	
         this.displayFrameX=UIWidth;
         this.displayFrameY=UIHight;
     	simInitializer = new SimInitializer((SAAModel) state);
@@ -62,7 +60,6 @@ public class SAAModelWithUI extends GUIState
     public void init(Controller c)
     {
         super.init(c);     
-                 
         // make the 3D display
         display3D = new Display3D(config.globalConfig.worldX,config.globalConfig.worldY,this);           
         display3D.scale(0.8 / config.globalConfig.worldX);
@@ -88,70 +85,16 @@ public class SAAModelWithUI extends GUIState
         displayFrame.setBounds(0, 0, displayFrameX/2,displayFrameY/2);
         display.attach( xzViewPortrayal, "xzView" );
 
-    }
-
-
-	public void start()
-	{
-		((SAAModel)state).reset();
-		simInitializer.generateSimulation();		
-		super.start();
-		setupPortrayals();	
-		
-	}
-
-
-	public void load(SimState state)
-	{
-		((SAAModel)state).reset();
-		simInitializer.generateSimulation();
-		super.load(state);
-		setupPortrayals();
-	}
-
-	
-	
-	/**
-	 * A method which sets up the portrayals of the different layers in the UI,
-	 * this is where details of the simulation are coloured and set to different
-	 * parts of the UI
-	 */
-	public void setupPortrayals()
-	{		
-		SAAModel simulation = (SAAModel) state;		
-		
-		  // tell the portrayals what to portray and how to portray them
-        xzViewPortrayal.setField(simulation.xzView );
-        xzViewPortrayal.setPortrayalForClass(UAS.class,
-            new MovablePortrayal2D(
-                new CircledPortrayal2D(
-                    new LabelledPortrayal2D(
-                        new OvalPortrayal2D(Color.white,120,true),
-                        120, "ooooooooo", Color.white, true),
-                    0, 150.0, Color.green, true)));
-        
-//        xzViewPortrayal.setPortrayalForClass(Waypoint.class, new OvalPortrayal2D(40.0));                                                
-        // reschedule the displayer
-        display.reset();        
-        // redraw the display
-        display.repaint();
-        
-        
-		
-		// tell the portrayals what to portray and how to portray them
-		environment3DPortrayal.setField( simulation.environment3D );
-		javax.media.j3d.BranchGroup bg=null;
+        javax.media.j3d.BranchGroup bg=null;
 		try {
 			bg= BranchGroupPortrayal3D.getBranchGroupForResource(BranchGroupPortrayal3D.class, "shapes/MQ-27.obj");
 		} catch (IllegalArgumentException | FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
-		BranchGroupPortrayal3D bp=new BranchGroupPortrayal3D(bg,1);
+		bp=new BranchGroupPortrayal3D(bg,1);
 		
-		environment3DPortrayal.setPortrayalForClass(UAS.class, bp);
 		
-		environment3DPortrayal.setPortrayalForClass(Waypoint.class, new SpherePortrayal3D(new Color(0, 255, 0), 40, 10)
+		sp = new SpherePortrayal3D(new Color(0, 255, 0), 40, 10)
 		{
 			private static final long serialVersionUID = 1L;
 			
@@ -219,9 +162,48 @@ public class SAAModelWithUI extends GUIState
 				setScale(j3dModel,scale);
 				return  super.getModel(obj, j3dModel);
 			}
-		});				
+		};
 
-		display3D.createSceneGraph();
+    }
+
+
+	public void start()
+	{
+		((SAAModel)state).reset();
+		simInitializer.generateSimulation();		
+		super.start();
+		setupPortrayals();	
+		
+	}
+
+
+	public void load(SimState state)
+	{
+		((SAAModel)state).reset();
+		simInitializer.generateSimulation();
+		super.load(state);
+		setupPortrayals();
+	}
+
+	
+	
+	/**
+	 * A method which sets up the portrayals of the different layers in the UI,
+	 * this is where details of the simulation are coloured and set to different
+	 * parts of the UI
+	 */
+	public void setupPortrayals()
+	{		
+		SAAModel simulation = (SAAModel) state;	
+		
+		// tell the portrayals what to portray and how to portray them
+		environment3DPortrayal.setField( simulation.environment3D );		
+		
+		environment3DPortrayal.setPortrayalForClass(UAS.class, bp);
+		
+		environment3DPortrayal.setPortrayalForClass(Waypoint.class,sp);				
+
+//		display3D.createSceneGraph();
 		// reschedule the displayer
 		display3D.reset();
 		
@@ -241,7 +223,6 @@ public class SAAModelWithUI extends GUIState
         display3DFrame = null;
         display3D = null;
     }
-    
     
     
     public static String getName() { return "UAS-SAA-Sim"; }

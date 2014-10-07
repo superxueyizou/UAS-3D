@@ -38,11 +38,7 @@ public class SimInitializer
 	    {
 	    	UAS uas = (UAS)o;
 	    	uas.getCaa().init();	
-	    }
-				
-//		System.out.println("Simulation stepping begins!");
-//		System.out.println("====================================================================================================");		
-			
+	    }			
 	}
 	
 }

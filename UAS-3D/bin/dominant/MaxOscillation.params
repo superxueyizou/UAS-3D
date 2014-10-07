@@ -1,0 +1,68 @@
+# Copyright 2006 by Sean Luke and George Mason University
+# Licensed under the Academic Free License version 3.0
+# See the file "LICENSE" for more information
+
+parent.0		= /home/viki/EclipseWorkspace/ECJ/ecj/ec/simple/simple.params
+stat.file = $MaxOscillationStatics.stat
+stat.num-children = 1
+stat.child.0 = dominant.MyStatistics
+stat.child.0.file = $MaxOscillationStatics2.csv
+pop.subpop.0.size = 200
+generations = 200
+
+pop.subpop.0.species		= ec.vector.FloatVectorSpecies
+pop.subpop.0.species.ind	= ec.vector.DoubleVectorIndividual
+pop.subpop.0.species.fitness 	= ec.simple.SimpleFitness	
+
+# the size of simulation parameters
+pop.subpop.0.species.genome-size	=7
+
+#self StdDev
+pop.subpop.0.species.min-gene.0 = 0
+pop.subpop.0.species.max-gene.0 =15
+#self Vx
+pop.subpop.0.species.min-gene.1 =169
+pop.subpop.0.species.max-gene.1 =304
+# self Vy
+pop.subpop.0.species.min-gene.2 = -67 
+pop.subpop.0.species.max-gene.2 = 58
+
+# head on offset   
+pop.subpop.0.species.min-gene.3 = -500 
+pop.subpop.0.species.max-gene.3 =500
+# head on StdDev
+pop.subpop.0.species.min-gene.4 = 0 
+pop.subpop.0.species.max-gene.4 = 15 
+#head on Vx
+pop.subpop.0.species.min-gene.5 =169
+pop.subpop.0.species.max-gene.5 =304
+#head On Vy
+pop.subpop.0.species.min-gene.6 = -67 
+pop.subpop.0.species.max-gene.6 = 58
+
+pop.subpop.0.species.min-gene = -500
+pop.subpop.0.species.max-gene = 500
+
+pop.subpop.0.species.crossover-type	= two
+pop.subpop.0.species.crossover-likelihood	= 0.8
+
+pop.subpop.0.species.mutation-prob	= 0.05
+pop.subpop.0.species.mutation-type= gauss
+pop.subpop.0.species.mutation-stdev= 0.1
+pop.subpop.0.species.mutation-bounded = true
+pop.subpop.0.species.out-of-bounds-retries = 20
+
+#pop.subpop.0.species.mutation-type = polynomial
+#pop.subpop.0.species.mutation-distribution-index=20
+#pop.subpop.0.species.alternative-polynomial-version = true
+
+
+pop.subpop.0.species.pipe = ec.vector.breed.VectorMutationPipeline
+
+pop.subpop.0.species.pipe.source.0 = ec.vector.breed.VectorCrossoverPipeline
+
+pop.subpop.0.species.pipe.source.0.source.0 = ec.select.FitProportionateSelection
+pop.subpop.0.species.pipe.source.0.source.1 = ec.select.FitProportionateSelection
+
+
+eval.problem            = dominant.MaxOscillation

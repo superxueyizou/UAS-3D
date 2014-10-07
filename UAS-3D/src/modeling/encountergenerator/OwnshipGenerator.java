@@ -56,7 +56,7 @@ public class OwnshipGenerator
 		UASPerformance uasPerformance = new UASPerformance(ownshipConfig.ownshipStdDevX, ownshipConfig.ownshipStdDevY,ownshipConfig.ownshipStdDevZ,
 				ownshipConfig.ownshipMaxSpeed, ownshipConfig.ownshipMinSpeed, ownshipConfig.ownshipMaxClimb, 
 				ownshipConfig.ownshipMaxDescent,ownshipConfig.ownshipMaxTurning, ownshipConfig.ownshipMaxAcceleration, ownshipConfig.ownshipMaxDeceleration);
-		SenseParas senseParas = new SenseParas(ownshipConfig.ownshipViewingRange,ownshipConfig.ownshipViewingAngle);
+		SenseParas senseParas = null;
 		
 		UAS ownship = new UAS(state.getNewID(),location, uasVelocity,uasPerformance, senseParas);
 		ownship.setAlias(ownshipAlias);

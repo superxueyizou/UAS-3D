@@ -24,7 +24,7 @@ public class ACASX3DMDP
 	public static final int nra=7;
 	
 	public static final double UPPER_H=600.0;
-	public static final double UPPER_VY=42.0;
+	public static final double UPPER_VY=70.0;
 	
 	public static final double hRes = UPPER_H/nh;
 	public static final double oVRes = UPPER_VY/noVy;

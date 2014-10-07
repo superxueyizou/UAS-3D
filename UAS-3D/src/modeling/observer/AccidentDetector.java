@@ -23,19 +23,13 @@ import sim.util.Double3D;
  */
 public class AccidentDetector implements Constants,Steppable
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	/**
-	 * 
-	 */
+
 	private File accidentLog = new File("AccidentLog.txt");
 	private PrintStream ps;
 	
 	private SAAModel state;
-	private int noAccidents=0;
-	
+	private int noAccidents=0;	
 	
 	public AccidentDetector()
 	{
@@ -60,8 +54,7 @@ public class AccidentDetector implements Constants,Steppable
 		{
 			return;
 		}
-		this.state = (SAAModel)simState;
-		
+		this.state = (SAAModel)simState;		
 		UAS uas1;
 				
         outerLoop:
@@ -83,13 +76,12 @@ public class AccidentDetector implements Constants,Steppable
 				{
 					continue;
 				}
-				if (detectCollisionWithOtherUAS(uas1, uas2))
+				if (detectCollisionBetweenUAS(uas1, uas2))
 				{
 					addLog(Constants.AccidentType.CLASHWITHOTHERUAS, uas1.getID(), state.schedule.getSteps(), uas1.getLocation(), "the other UAS's ID is"+uas2.getID());
 					noAccidents++;
 					uas1.isActive=false;
 					uas2.isActive=false;
-//					i++;
 					continue outerLoop;
 				}
 			}
@@ -104,7 +96,7 @@ public class AccidentDetector implements Constants,Steppable
 	}
 	
 	
-	private boolean detectCollisionWithOtherUAS(UAS uas1, UAS uas2)
+	private boolean detectCollisionBetweenUAS(UAS uas1, UAS uas2)
 	{	
 		double deltaHori=Math.pow((uas1.getLocation().x-uas2.getLocation().x),2)+Math.pow((uas1.getLocation().z-uas2.getLocation().z),2);
 		double deltaVert=Math.abs(uas1.getLocation().y-uas2.getLocation().y);	

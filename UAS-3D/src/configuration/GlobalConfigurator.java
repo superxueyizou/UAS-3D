@@ -18,6 +18,7 @@ import sim.display.GUIState;
 import sim.engine.SimState;
 import tools.UTILS;
 import java.awt.Color;
+import javax.swing.JTextField;
 
 public class GlobalConfigurator extends JPanel
 {
@@ -35,6 +36,7 @@ public class GlobalConfigurator extends JPanel
 	private JButton btnFinish;
 	private JButton btnOpen;
 	private JButton btnLoad;
+	private JTextField alertTimeTextField;
 
 	/**
 	 * @wbp.parser.constructor
@@ -113,7 +115,7 @@ public class GlobalConfigurator extends JPanel
 		
 		
 		JRadioButton rdbtnSensorValueUncertainty = new JRadioButton("Sensor value uncertainty?");
-		rdbtnSensorValueUncertainty.setBounds(12, 102, 229, 15);
+		rdbtnSensorValueUncertainty.setBounds(12, 101, 229, 15);
 		this.add(rdbtnSensorValueUncertainty);
 		rdbtnSensorValueUncertainty.setSelected(config.globalConfig.sensorValueUncertainty);
 		rdbtnSensorValueUncertainty.addActionListener(new ActionListener() 
@@ -128,6 +130,40 @@ public class GlobalConfigurator extends JPanel
 				}
 			}
 		});
+		
+		JRadioButton rdbtnEncounterGenerator = new JRadioButton("encounter generator enable?");
+		rdbtnEncounterGenerator.setBounds(12, 125, 229, 15);
+		this.add(rdbtnEncounterGenerator);
+		rdbtnEncounterGenerator.setSelected(config.globalConfig.encounterGeneratorEnabler);
+		rdbtnEncounterGenerator.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) {
+				if(((JRadioButton)e.getSource()).isSelected())
+				{
+					config.globalConfig.encounterGeneratorEnabler = true;
+				} else {
+					
+					config.globalConfig.encounterGeneratorEnabler = false;
+				}
+			}
+		});
+		
+		JLabel lblAlertTime = new JLabel("Alert time");
+		lblAlertTime.setBounds(12, 156, 63, 23);
+		add(lblAlertTime);
+		
+		alertTimeTextField = new JTextField();
+		alertTimeTextField.setText(""+config.globalConfig.alertTime);
+		alertTimeTextField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				config.globalConfig.alertTime= Integer.parseInt(alertTimeTextField.getText());
+//				System.out.println(config.globalConfig.alertTime);
+			}
+		});
+		alertTimeTextField.setBounds(85, 157, 86, 20);
+		add(alertTimeTextField);
+		alertTimeTextField.setColumns(10);
+		
 	
 //		JLabel lblModelbuilderSetting = new JLabel("ModelBuilder Setting");
 //		lblModelbuilderSetting.setBounds(12, 151, 165, 15);

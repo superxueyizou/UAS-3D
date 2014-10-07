@@ -93,8 +93,8 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 			
 			if(Math.abs(h)<=ACASX3DMDP.UPPER_H && r<=ACASX3DDTMC.UPPER_R)
 			{
-				Map<Integer, Double> entryTimeDistribution=calculateEntryTimeDistribution(intruder);
-				Map<Integer, Double> qValuesMap2= calculateQValuesMap(intruder, entryTimeDistribution);
+				Map<Integer, Double> entryTimeDistribution = calculateEntryTimeDistribution(intruder);
+				Map<Integer, Double> qValuesMap2 = calculateQValuesMap(intruder, entryTimeDistribution);
 				for (Integer action : qValuesMap2.keySet()) 
 				{
 					if(qValuesMap.containsKey(action))
@@ -118,7 +118,7 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 		}
 		
 		double maxQValue=Double.NEGATIVE_INFINITY;
-		int bestActionCode=-999;
+		int bestActionCode=0;
 		Set<Entry<Integer,Double>> entrySet = qValuesMap.entrySet();
 		for (Entry<Integer,Double> entry : entrySet) 
 		{
@@ -158,7 +158,9 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 		ArrayList<AbstractMap.SimpleEntry<Integer, Double>> entryTimeMapProbs = new ArrayList<AbstractMap.SimpleEntry<Integer, Double>>();
 		Map<Integer, Double> entryTimeDistribution = new TreeMap<>();// must be a sorted map
 
-		assert (rv>ACASX3DDTMC.UPPER_RV);
+		assert (r<=ACASX3DDTMC.UPPER_R);
+		assert (rv<=ACASX3DDTMC.UPPER_RV);
+		assert (alpha>=-180 && alpha<=180);
 	
 		int rIdxL = (int)Math.floor(r/rRes);
 		int rvIdxL = (int)Math.floor(rv/rvRes);
@@ -215,7 +217,9 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 		double oVRes=ACASX3DMDP.oVRes;
 		double iVRes=ACASX3DMDP.iVRes;
 		
-		assert (Math.abs(oVy)>ACASX3DMDP.UPPER_VY && Math.abs(iVy)>ACASX3DMDP.UPPER_VY );
+		assert (Math.abs(h)<=ACASX3DMDP.UPPER_H);
+		assert (Math.abs(oVy)<=ACASX3DMDP.UPPER_VY);
+		assert (Math.abs(iVy)<=ACASX3DMDP.UPPER_VY);
 		
 		Map<Integer, Double> qValuesMap = new TreeMap<>();
 		ArrayList<AbstractMap.SimpleEntry<Integer, Double>> actionMapValues = new ArrayList<AbstractMap.SimpleEntry<Integer, Double>>();
@@ -245,6 +249,7 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 						int t=entryTime_prob.getKey();
 						double entryTimeProb= entryTime_prob.getValue();
 						
+//						System.out.println((t*lookupTable3D.numCStates)+"    "+ approxCState+"     "+approxCStateOrder);
 						int index=lookupTable3D.indexArr.get((t*lookupTable3D.numCStates)+ approxCStateOrder);
 						int numActions = lookupTable3D.indexArr.get((t*lookupTable3D.numCStates)+approxCStateOrder+1)-index;									
 						for (int n=0;n<numActions;n++) 

@@ -12,26 +12,26 @@ import modeling.uas.UASPerformance;
 
 public class AutoPilot implements Steppable
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
+	
+	private SAAModel state; 
+	private UAS hostUAS;
+	
 	private final double SDX;
 	private final double SDY;
 	private final double SDZ;
-	private SAAModel state; 
-	private UAS hostUAS;
+	
 	private String type;//normative manoeuvre type
 	private int caActionCode;//action code from collision avoidance algorithm
 	private ChorusResData ssData=null; // data from self separation algorithm
 	private UASPerformance uasPerformance;
 
-	public AutoPilot(SimState simstate, UAS uas, UASPerformance uasPerformance, String type, int actionCode) 
+	public AutoPilot(SimState simstate, UAS uas, UASPerformance uasPerformance, String type, int caActionCode) 
 	{
 		state = (SAAModel)simstate;
 		hostUAS = uas;	
 		this.type=type;
-		this.caActionCode=actionCode;
+		this.caActionCode=caActionCode;
 		this.uasPerformance=uasPerformance;
 		this.SDX=this.uasPerformance.getStdDevX();
 		this.SDY=this.uasPerformance.getStdDevY();
@@ -88,6 +88,60 @@ public class AutoPilot implements Steppable
 		}		
 	}
 
+	private Waypoint executeActionCode(int actionCode)
+	{	
+		Waypoint wp = new Waypoint(state.getNewID(), null);
+		double ay=hostUAS.getCaa().getActionA(actionCode);		
+		double ax=SDX* state.random.nextGaussian();
+		double az=SDZ* state.random.nextGaussian();
+		double vx=hostUAS.getVelocity().x;
+		double vy=hostUAS.getVelocity().y;
+		double vz=hostUAS.getVelocity().z;
+
+		double targetV= hostUAS.getCaa().getActionV(actionCode);
+		if(actionCode==0)
+		{		
+			ay = SDY* state.random.nextGaussian();
+		}
+		else if(ay>0 && targetV<vy)
+		{
+			ay = -Math.abs(SDY* state.random.nextGaussian());
+		}
+		else if(ay<0 && targetV>vy)
+		{
+			ay = Math.abs(SDY* state.random.nextGaussian());
+		}
+
+		Double2D groundVelocity = new Double2D(vx+ax,vz+az);
+		if(groundVelocity.length()>uasPerformance.getMaxSpeed())
+		{
+			groundVelocity= groundVelocity.resize(uasPerformance.getMaxSpeed());
+		}
+		else if(groundVelocity.length()<uasPerformance.getMinSpeed())
+		{
+			groundVelocity= groundVelocity.resize(uasPerformance.getMinSpeed());
+		}
+		
+		double newVy=vy+ay;
+		if(newVy>uasPerformance.getMaxClimb())
+		{
+			newVy=uasPerformance.getMaxClimb();
+		}
+		else if(newVy<-uasPerformance.getMaxDescent())
+		{
+			newVy=-uasPerformance.getMaxDescent();
+		}
+		
+		double x= hostUAS.getLocation().x + 0.5*(vx+groundVelocity.x);				
+		double y= hostUAS.getLocation().y + 0.5*(vy + newVy);
+		double z= hostUAS.getLocation().z + 0.5*(vz+groundVelocity.y);
+		hostUAS.setOldVelocity(new Double3D(vx,vy,vz));
+		hostUAS.setVelocity(new Double3D(groundVelocity.x, newVy,groundVelocity.y));
+		wp.setLocation(new Double3D(x , y,z));	
+		wp.setAction(actionCode+30);//30 for ACASX
+		return wp;
+	}
+	
 	private Waypoint executeTrkManeuver(double targetAngle)
 	{
 		Waypoint wp = new Waypoint(state.getNewID(), null);
@@ -170,40 +224,7 @@ public class AutoPilot implements Steppable
 	}
 	
 	
-	private Waypoint executeActionCode(int actionCode)
-	{
-		Waypoint wp = new Waypoint(state.getNewID(), null);
-		double ay=hostUAS.getCaa().getActionA(actionCode);
-		double targetV= hostUAS.getCaa().getActionV(actionCode);
-		double x;
-		double y;
-		double z;
-		
-		double currentV=hostUAS.getVelocity().y;
-		if(Double.isInfinite(ay)||Double.isNaN(ay))
-		{		
-			ay = SDY* state.random.nextGaussian();
-		}
-		else if(ay>0 && targetV<currentV)
-		{
-			ay = -Math.abs(SDY* state.random.nextGaussian());
-		}
-		else if(ay<0 && targetV>currentV)
-		{
-			ay = Math.abs(SDY* state.random.nextGaussian());
-		}
-		
-		x = hostUAS.getLocation().x+hostUAS.getVelocity().x;
-		y = hostUAS.getLocation().y+hostUAS.getVelocity().y+0.5*ay;
-		z = hostUAS.getLocation().z+hostUAS.getVelocity().z;
-		
-		hostUAS.setOldVelocity(new Double3D(hostUAS.getVelocity().x,hostUAS.getVelocity().y,hostUAS.getVelocity().z));
-		hostUAS.setVelocity(new Double3D(hostUAS.getVelocity().x,hostUAS.getVelocity().y+ay,hostUAS.getVelocity().z));
-
-		wp.setLocation(new Double3D(x,y,z));
-		wp.setAction(actionCode+30);//30 for ACASX
-		return wp;
-	}
+	
 	
 	public Waypoint executeWhiteNoise()
 	{		
@@ -211,37 +232,34 @@ public class AutoPilot implements Steppable
 		double vx=hostUAS.getVelocity().x;
 		double vy=hostUAS.getVelocity().y;
 		double vz=hostUAS.getVelocity().z;
-		double ax = SDX * state.random.nextGaussian()*(state.random.nextBoolean()?1:-1);
-		double ay = SDY * state.random.nextGaussian()*(state.random.nextBoolean()?1:-1);
-		double az = SDZ * state.random.nextGaussian()*(state.random.nextBoolean()?1:-1);
+		double ax = SDX * state.random.nextGaussian();
+		double ay = SDY * state.random.nextGaussian();
+		double az = SDZ * state.random.nextGaussian();
 		Double2D groundVelocity = new Double2D(vx+ax,vz+az);
 		if(groundVelocity.length()>uasPerformance.getMaxSpeed())
 		{
-			Double2D newGroundVelocity= groundVelocity.resize(uasPerformance.getMaxSpeed());
-			ax=newGroundVelocity.x-vx;
-			az=newGroundVelocity.y-vz;
+			groundVelocity= groundVelocity.resize(uasPerformance.getMaxSpeed());
 		}
 		else if(groundVelocity.length()<uasPerformance.getMinSpeed())
 		{
-			Double2D newGroundVelocity= groundVelocity.resize(uasPerformance.getMinSpeed());
-			ax=newGroundVelocity.x-vx;
-			az=newGroundVelocity.y-vz;
+			groundVelocity= groundVelocity.resize(uasPerformance.getMinSpeed());
 		}
 		
-		if(vy+ay>uasPerformance.getMaxClimb())
+		double newVy=vy+ay;
+		if(newVy>uasPerformance.getMaxClimb())
 		{
-			ay=uasPerformance.getMaxClimb()-vy;
+			newVy=uasPerformance.getMaxClimb();
 		}
-		else if(vy+ay<-uasPerformance.getMaxDescent())
+		else if(newVy<-uasPerformance.getMaxDescent())
 		{
-			ay=-uasPerformance.getMaxDescent()-vy;
+			newVy=-uasPerformance.getMaxDescent();
 		}
 		
-		double x = hostUAS.getLocation().x + vx+0.5*ax;				
-		double y= hostUAS.getLocation().y + vy + 0.5*ay;
-		double z= hostUAS.getLocation().z+ vz + 0.5*az;;
+		double x= hostUAS.getLocation().x + 0.5*(vx+groundVelocity.x);				
+		double y= hostUAS.getLocation().y + 0.5*(vy + newVy);
+		double z= hostUAS.getLocation().z + 0.5*(vz+groundVelocity.y);
 		hostUAS.setOldVelocity(new Double3D(vx,vy,vz));
-		hostUAS.setVelocity(new Double3D(vx+ax, vy+ay,vz+az));
+		hostUAS.setVelocity(new Double3D(groundVelocity.x, newVy,groundVelocity.y));
 		wp.setLocation(new Double3D(x , y,z));		
 		return wp;
 	}

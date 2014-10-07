@@ -404,7 +404,7 @@ public class OwnshipConfigurator extends JPanel
 		{			
 			JPanel performancePanel = new JPanel();
 			performancePanel.setBackground(Color.LIGHT_GRAY);
-			performancePanel.setBounds(10, 433, 290, 188);
+			performancePanel.setBounds(10, 433, 290, 170);
 			add(performancePanel);
 			performancePanel.setLayout(null);
 			JLabel lblMaxspeed = new JLabel("MaxSpeed");
@@ -443,34 +443,14 @@ public class OwnshipConfigurator extends JPanel
 				}
 			});
 			minSpeedTextField_1.setColumns(10);
-			
-			JLabel lblPrefSpeed = new JLabel("PrefSpeed");
-			lblPrefSpeed.setBounds(12, 74, 105, 15);
-			performancePanel.add(lblPrefSpeed);
-			
-			JTextField prefSpeedTextField = new JTextField();
-			prefSpeedTextField.setBounds(171, 72, 114, 19);
-			performancePanel.add(prefSpeedTextField);
-			prefSpeedTextField.setText(String.valueOf(config.ownshipConfig.ownshipPrefSpeed));
-			prefSpeedTextField.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyReleased(KeyEvent e) {
-					JTextField speedTextField = (JTextField) e.getSource();
-					config.ownshipConfig.ownshipPrefSpeed = new Double(speedTextField.getText());
-				}
-			});
-			prefSpeedTextField.setColumns(10);
-			
-			
-			
-			
+					
 			JLabel lblMaxClimb = new JLabel("MaxClimb");
-			lblMaxClimb.setBounds(12, 101, 70, 19);
+			lblMaxClimb.setBounds(11, 75, 70, 19);
 			performancePanel.add(lblMaxClimb);
 			
 			
 			JTextField maxClimbTextField_1 = new JTextField();
-			maxClimbTextField_1.setBounds(170, 99, 114, 19);
+			maxClimbTextField_1.setBounds(169, 73, 114, 19);
 			performancePanel.add(maxClimbTextField_1);
 			maxClimbTextField_1.setText(String.valueOf(config.ownshipConfig.ownshipMaxClimb));
 			maxClimbTextField_1.addKeyListener(new KeyAdapter() {
@@ -483,12 +463,12 @@ public class OwnshipConfigurator extends JPanel
 			maxClimbTextField_1.setColumns(10);
 			
 			JLabel lblMaxDescent = new JLabel("MaxDescent");
-			lblMaxDescent.setBounds(12, 131, 101, 19);
+			lblMaxDescent.setBounds(11, 105, 101, 19);
 			performancePanel.add(lblMaxDescent);
 			
 			
 			JTextField maxDescentTextField_1 = new JTextField();
-			maxDescentTextField_1.setBounds(170, 133, 114, 19);
+			maxDescentTextField_1.setBounds(169, 107, 114, 19);
 			performancePanel.add(maxDescentTextField_1);
 			maxDescentTextField_1.setText(String.valueOf(config.ownshipConfig.ownshipMaxDescent));
 			maxDescentTextField_1.addKeyListener(new KeyAdapter() {
@@ -501,13 +481,13 @@ public class OwnshipConfigurator extends JPanel
 			maxDescentTextField_1.setColumns(10);
 			
 			JLabel lblMaxturning = new JLabel("MaxTurning");
-			lblMaxturning.setBounds(12, 162, 82, 15);
+			lblMaxturning.setBounds(11, 136, 82, 15);
 			performancePanel.add(lblMaxturning);
 			
 			{
 				
 				JTextField maxTurningTextField_1 = new JTextField();
-				maxTurningTextField_1.setBounds(171, 164, 114, 19);
+				maxTurningTextField_1.setBounds(170, 138, 114, 19);
 				performancePanel.add(maxTurningTextField_1);
 				maxTurningTextField_1.setText(String.valueOf(Math.round(Math.toDegrees(config.ownshipConfig.ownshipMaxTurning)*100)/100.0));
 				maxTurningTextField_1.addKeyListener(new KeyAdapter() {
