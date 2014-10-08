@@ -14,44 +14,38 @@ import sim.engine.*;
 public class SAAModel extends SimState
 {
 	private static final long serialVersionUID = 1L;
-	
-	public static Configuration config= Configuration.getInstance();
 	private static SAAModel state=null;
-	
+
 	public boolean runningWithUI = false; 
-	
-	public Bag allEntities = new Bag(); // entities to load into the environment2D, important
-	public Bag uasBag = new Bag();
+	public Continuous3D environment3D=null;
+	public Bag allEntities = null; // entities to load into the environment2D, important
+	public Bag uasBag = null;	
+    public String information="no information now"; 
 
+	private Configuration config;
     private int newID = 0;	
-    public String information="no information now";
-
-    public Continuous2D xzView;
-    public Continuous3D environment3D;
 	
-    public AccidentDetector aDetector= new AccidentDetector();
-    public ProximityMeasurer pMeasurer= new ProximityMeasurer();
-    public OscillationCalculator oCalculator= new OscillationCalculator();
-    public OscillationCounter oCounter= new OscillationCounter();
-    	
-	/**
+    private AccidentDetector aDetector= new AccidentDetector();
+    private ProximityMeasurer pMeasurer= new ProximityMeasurer();
+    private OscillationCalculator oCalculator= new OscillationCalculator();
+    /**
 	 * @param seed for random number generator
 	 * @param widthX the width of the simulation environment3D
 	 * @param heightY the height of the simulation environment3D
 	 * @param lengthZ the length of the simulation environment3D
 	 * @param UI pass true if the simulation is being run with a UI false if it is not.
 	 */
-    public static SAAModel getInstance(long seed, double widthX, double heightY, double lengthZ, boolean UI)
+    public static SAAModel getInstance(long seed, Configuration config, boolean UI)
     {
     	if(state==null)
     	{
-    		state=new SAAModel(seed, widthX, heightY, lengthZ, UI);
+    		state=new SAAModel(seed, config, UI);
     	}
     	
     	return state;    	
     }
     
-    public static SAAModel getInstance()
+    public static SAAModel getExistingInstance()
     {
     	if(state==null)
     	{
@@ -60,13 +54,21 @@ public class SAAModel extends SimState
     	
     	return state;    	
     }
-
-	private SAAModel(long seed, double widthX, double heightY, double lengthZ, boolean UI)
+    
+    public static void dispose()
     {
-		super(seed);
-		environment3D = new Continuous3D(1.0, widthX, heightY, lengthZ);
-		xzView = new Continuous2D(1.0,widthX,lengthZ);
-		runningWithUI = UI;				
+        state = null;
+     }
+
+	private SAAModel(long seed, Configuration config, boolean UI)
+    {
+		super(seed);		
+		runningWithUI = UI;		
+		environment3D = new Continuous3D(1.0, config.globalConfig.worldX, config.globalConfig.worldY, config.globalConfig.worldZ);
+		allEntities=new Bag();
+		uasBag=new Bag();
+				
+		this.config=config;
 	}    
 		
 	
@@ -74,16 +76,20 @@ public class SAAModel extends SimState
 	{
 		super.start();	
 		environment3D.clear();
-        xzView.clear();
-	
 		loadEntities();
 		scheduleEntities();			
 	}
-		
+	
+	public void finish()
+	{
+		super.finish();		
+		OscillationCounter oCounter = new OscillationCounter();
+		oCounter.step(this);		
+	}		
 
 	/**
-	 * A method which resets the variables for the COModel and also clears
-	 * the schedule and environment2D of any entities, to be called between simulations.	 * 
+	 * A method which resets the variables for the SAAModel and also clears
+	 * the schedule and environment3D of any entities, to be called between simulations.	 * 
 	 * This method resets the newID counter so should NOT be called during a run.
 	 */
 	public void reset()
@@ -91,18 +97,11 @@ public class SAAModel extends SimState
 		newID = 0;
 		uasBag.clear();
 		allEntities.clear();
-
+		schedule.clear();
 		environment3D.clear(); //clear the environment3D
-		xzView.clear();
 	}
 	
-	public void finish()
-	{
-		super.finish();		
-		OscillationCounter oCounter = new OscillationCounter();
-		oCounter.step(this);
-		
-	}
+
 	
 	
 	/**
@@ -127,14 +126,8 @@ public class SAAModel extends SimState
 		for(int i = 0; i < allEntities.size(); i++)
 		{
 			Entity e =(Entity) allEntities.get(i);
-			xzView.setObjectLocation(e, new Double2D(e.getLocation().x,e.getLocation().z).add(new Double2D(0.5*xzView.width,0.5*xzView.height)));
 			environment3D.setObjectLocation(e, e.getLocation());		
 		}
-//		Bag a=xzView.getAllObjects();
-//		for(int i=0;i<a.size();i++)
-//		{
-//			System.out.println(((UAS)a.get(i)).getLocation());
-//		}
 	}
 	
 	
@@ -175,13 +168,22 @@ public class SAAModel extends SimState
 		}	
 		schedule.scheduleRepeating(pMeasurer,counter++, 1.0);
 		schedule.scheduleRepeating(oCalculator,counter++, 1.0);	
-		schedule.scheduleRepeating(aDetector,counter++, 1.0);	
+		schedule.scheduleRepeating(getaDetector(),counter++, 1.0);	
 			
 	}
 
 
-	public String getInformation() {
+	public String getInformation() 
+	{
 		return information;
+	}
+
+	public AccidentDetector getaDetector() {
+		return aDetector;
+	}
+
+	public void setaDetector(AccidentDetector aDetector) {
+		this.aDetector = aDetector;
 	}
    
 

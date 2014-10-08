@@ -16,7 +16,7 @@ public class OvertakingModel
 		headOnConfig.intruderVx=-headOnConfig.intruderVx;	
 		headOnConfig.intruderOffsetX = config.globalConfig.alertTime*(config.ownshipConfig.ownshipVx-headOnConfig.intruderVx);
 		headOnConfig.intruderOffsetY = sign*scale*200;
-		headOnConfig.intruderOffsetZ = 2*(SAAModel.getInstance().random.nextDouble()-0.5)*5000;
+		headOnConfig.intruderOffsetZ = 2*(SAAModel.getExistingInstance().random.nextDouble()-0.5)*5000;
 		return headOnConfig;
 	}
 

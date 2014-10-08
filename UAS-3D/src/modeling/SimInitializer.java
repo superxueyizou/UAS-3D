@@ -11,17 +11,8 @@ import configuration.Configuration;
  * Called for by SAAModelWithUI class
  */
 public class SimInitializer
-{
-	private SAAModel state;	
-	private Configuration config;
-
-	public SimInitializer(SAAModel simState)
-	{
-		state = simState;
-		config= Configuration.getInstance();
-	}
-	
-	public void generateSimulation()
+{	
+	public static void generateSimulation(SAAModel state, Configuration config)
 	{	
 		UAS ownship = new OwnshipGenerator(state,"ownship",-0.4*config.globalConfig.worldX, 0,0, config.ownshipConfig).execute();
 		state.uasBag.add(ownship);

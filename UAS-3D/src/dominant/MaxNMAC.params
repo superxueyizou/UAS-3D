@@ -8,7 +8,7 @@ stat.num-children = 1
 stat.child.0 = dominant.MyStatistics
 stat.child.0.file = $MaxNMACStatics2.csv
 
-pop.subpop.0.size = 100
+pop.subpop.0.size = 5000
 generations = 50
 
 pop.subpop.0.species		= ec.vector.FloatVectorSpecies

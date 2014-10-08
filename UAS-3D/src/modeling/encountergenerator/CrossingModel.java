@@ -16,7 +16,7 @@ public class CrossingModel
 		crossingConfig.intruderVx=-crossingConfig.intruderVx;	
 		crossingConfig.intruderOffsetX = config.globalConfig.alertTime*(config.ownshipConfig.ownshipVx-crossingConfig.intruderVx);
 		crossingConfig.intruderOffsetY = sign*scale*200;
-		crossingConfig.intruderOffsetZ = 2*(SAAModel.getInstance().random.nextDouble()-0.5)*5000;
+		crossingConfig.intruderOffsetZ = 2*(SAAModel.getExistingInstance().random.nextDouble()-0.5)*5000;
 		return crossingConfig;
 	}
 

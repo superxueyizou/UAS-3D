@@ -29,8 +29,6 @@ import sim.portrayal3d.simple.WireFrameBoxPortrayal3D;
  */
 public class SAAModelWithUI extends GUIState
 {	
-	protected SimInitializer simInitializer; 
-	
 	public static Configuration config= Configuration.getInstance();
 	
 	private int displayFrameX;
@@ -50,10 +48,9 @@ public class SAAModelWithUI extends GUIState
 	
     public SAAModelWithUI(int UIWidth, int UIHight) 
     {   
-        super(SAAModel.getInstance(785945568, config.globalConfig.worldX, config.globalConfig.worldY, config.globalConfig.worldZ, true)); 	
+        super(SAAModel.getInstance(785945568, config, true)); 	
         this.displayFrameX=UIWidth;
         this.displayFrameY=UIHight;
-    	simInitializer = new SimInitializer((SAAModel) state);
     }
   
     
@@ -170,7 +167,7 @@ public class SAAModelWithUI extends GUIState
 	public void start()
 	{
 		((SAAModel)state).reset();
-		simInitializer.generateSimulation();		
+		SimInitializer.generateSimulation((SAAModel)state, config);		
 		super.start();
 		setupPortrayals();	
 		
@@ -180,7 +177,7 @@ public class SAAModelWithUI extends GUIState
 	public void load(SimState state)
 	{
 		((SAAModel)state).reset();
-		simInitializer.generateSimulation();
+		SimInitializer.generateSimulation((SAAModel)state, config);		
 		super.load(state);
 		setupPortrayals();
 	}

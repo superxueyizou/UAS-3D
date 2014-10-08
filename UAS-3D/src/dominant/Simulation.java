@@ -29,8 +29,7 @@ public class Simulation
 		ParameterDatabase database = Evolve.loadParameterDatabase(params);
 		EvolutionState eState= Evolve.initialize(database, 0);
 		eState.startFresh();
-		int result=EvolutionState.R_NOTDONE;
-		
+		int result=EvolutionState.R_NOTDONE;		
 		
 		String title = "generation,selfStdDev,selfVx,selfVy,"+
 				   "headOnOffsetY,headOnStdDev,headOnVx,headOnVy,"+                
@@ -56,17 +55,15 @@ public class Simulation
 		}	
 		long endTime=System.currentTimeMillis();
 		System.out.println(String.format("This evolution takes %d seconds", (endTime-startTime)/1000));
-//		for(int j=0; j<MyStatistics.accidents.length; j++)
-//		{
-//			System.out.print(MyStatistics.accidents[j]);
-//		}
 				
-		eState.finish(result);		
-		Object[] options= new Object[]{"Recurrence","Close"};
-		int confirmationResult = JOptionPane.showOptionDialog(null, "choose the next step", "What's next", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, 0);
+		eState.finish(result);	
+		Evolve.cleanup(eState);	
 		
-		if (confirmationResult == 0 )
-		{
+//		Object[] options= new Object[]{"Recurrence","Close"};
+//		int confirmationResult = JOptionPane.showOptionDialog(null, "choose the next step", "What's next", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, 0);
+//		
+//		if (confirmationResult == 0 )
+//		{
 //			String str = UTILS.readLastLine(new File(fileName+"Statics.stat"), "utf-8").trim();
 //			String[] pArr= str.split(" ");
 //			//System.out.println(pArr[3]);
@@ -81,11 +78,11 @@ public class Simulation
 //    		
 //			System.out.println("\nRecurrenceWithGUI");
 //			SimulationWithUI.main(null);
-		}	
-		else if (confirmationResult == 2 )
-		{
-			Evolve.cleanup(eState);	
-		}
+//		}	
+//		else if (confirmationResult == 2 )
+//		{
+//			Evolve.cleanup(eState);	
+//		}
 		
 	}
 	

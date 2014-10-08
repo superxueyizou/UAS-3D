@@ -35,9 +35,7 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
             state.output.fatal("Whoa!  It's not a DoubleVectorIndividual!!!",null);        
       
         DoubleVectorIndividual ind2 = (DoubleVectorIndividual)ind;
-        double distanceToDangerSum=0;
-        long time = System.nanoTime();
-        
+             
         double ownshipVx= ind2.genome[0];
         double ownshipVy= ind2.genome[1];
         double ownshipVz= ind2.genome[2];
@@ -80,86 +78,63 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
 		intruderConfig2.intruderVz=intruder2Vz;
 		config.intrudersConfig.put("intruder2", intruderConfig2);
 		
-		SAAModel simState= SAAModel.getInstance(785945568, config.globalConfig.worldX, config.globalConfig.worldY, config.globalConfig.worldZ, false); 	
+		SAAModel simState= SAAModel.getInstance(785945568, config, false); 	
+
+
+    	SimInitializer.generateSimulation(simState, config);   		
+		simState.start();	
+		do
+		{
+			if (!simState.schedule.step(simState))
+			{
+				break;
+			}
+		} while(simState.schedule.getSteps()<= 50);	
+
+		simState.finish();
 		
-		int times =1, dividend=0;
-        for(int i=0;i<times; i++)
-        {  
-        	SimInitializer sBuilder = new SimInitializer(simState);
-    		sBuilder.generateSimulation();   		
-  		
-    		simState.start();	
-    		do
-    		{
-    			if (!simState.schedule.step(simState))
-    			{
-    				break;
-    			}
-    		} while(simState.schedule.getSteps()<= 50);	
-    		
-    		if(simState.schedule.getSteps()> 50)
-    		{
-    			
-    			 ((SimpleFitness)ind2.fitness).setFitness(  state,            
-    			            0,/// ...the fitness...
-    			            false);///... is the individual ideal?  Indicate here...
+		double globalMinDistanceToDanger=Double.MAX_VALUE;
+		for(int j=0; j<simState.uasBag.size(); j++)
+		{
+			UAS uas = (UAS)simState.uasBag.get(j);
+			double minDistanceToDanger=uas.getMinDistanceToDanger();
+			if(minDistanceToDanger<globalMinDistanceToDanger)
+			{
+				globalMinDistanceToDanger = minDistanceToDanger;
+			}
+			
+		}	
+//		System.out.println(globalMinDistanceToDanger);
+		simState.reset();
 
-    			ind2.evaluated = true;
-    			return;
-    		}
-    		simState.finish();
-    		
-    		for(int j=0; j<simState.uasBag.size(); j++)
-    		{
-    			UAS uas = (UAS)simState.uasBag.get(j);
-    			double minDistanceToDanger=uas.getMinDistanceToDanger();
-    			System.out.println(minDistanceToDanger);
-
-    			if(minDistanceToDanger>0)
-				{
-    				distanceToDangerSum += minDistanceToDanger;
-				}
-    			else
-    			{
-    				distanceToDangerSum += 0;
-    			}
-    			
-    			dividend++;
-    		}
-    		
-        }
-        
-		float rawFitness= (float)distanceToDangerSum/dividend;  
-		float fitness = 1/Math.abs(1+rawFitness);
-		System.out.println(fitness);
+		float fitness = (float) (10000-globalMinDistanceToDanger);		
         
         if (!(ind2.fitness instanceof SimpleFitness))
             state.output.fatal("Whoa!  It's not a SimpleFitness!!!",null);
         
         ((SimpleFitness)ind2.fitness).setFitness(   state,            
 										            fitness,/// ...the fitness...
-										            false);///... is the individual ideal?  Indicate here...
+										            (fitness==10000));///... is the individual ideal?  Indicate here...
         
         ind2.evaluated = true;
-//        System.out.println("individual result: selfDestDist("+selfDestDist+ "), selfSpeed("+selfSpeed+ "), isRightSide("+headOnIsRightSide+"), offset("+ headOnOffset+"), speed("+ headOnSpeed + "); fitness[[ " + fitness +" ]]" );
-        System.out.println();
+//        System.out.println();
         
-        //if(fitness >0.9)
-        {
-        	StringBuilder dataItem = new StringBuilder();
-        	dataItem.append(state.generation+",");
-        	for (int i=0; i< ind2.genome.length-1; i++)
-        	{
-        		dataItem.append(ind2.genome[i]+",");
-        		
-        	}
-        	dataItem.append(fitness+",");
-        	dataItem.append(simState.aDetector.getNoAccidents()+",");
-        	dataItem.append(ind2.genome[ind2.genome.length-1]);
-        	Simulation.simDataSet.add(dataItem.toString());
-        
-        }
-        MyStatistics.accidents[state.generation]+= simState.aDetector.getNoAccidents();
+//        if(fitness >0.9)
+//        {
+//        	StringBuilder dataItem = new StringBuilder();
+//        	dataItem.append(state.generation+",");
+//        	for (int i=0; i< ind2.genome.length-1; i++)
+//        	{
+//        		dataItem.append(ind2.genome[i]+",");
+//        		
+//        	}
+//        	dataItem.append(fitness+",");
+//        	dataItem.append(simState.getaDetector().getNoAccidents()+",");
+//        	dataItem.append(ind2.genome[ind2.genome.length-1]);
+//        	Simulation.simDataSet.add(dataItem.toString());
+//        
+//        }
+//        MyStatistics.accidents[state.generation]+= simState.getaDetector().getNoAccidents();
 
 	}
 
