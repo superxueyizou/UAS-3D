@@ -1,13 +1,7 @@
-package saa.collsionavoidance.mdpLite;
+package saa.collsionavoidance.acasx2d;
 
 public class ACASXGen 
 {
-
-	public ACASXGen() 
-	{
-		// TODO Auto-generated constructor stub
-		
-	}
 
 	/**
 	 * @param args

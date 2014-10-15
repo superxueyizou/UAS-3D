@@ -17,9 +17,6 @@ import sim.util.*;
  */
 public class UAS extends Entity
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private String alias;
@@ -34,20 +31,19 @@ public class UAS extends Entity
 	private Double3D oldLocation;
 	private Double3D location;
 	private UASVelocity oldUASVelocity;		
-	private UASVelocity UASVelocity;	
-	
-	private Bag achievedWaypoints;
+	private UASVelocity UASVelocity;		
 
-	private UASPerformance uasPerformance;//the set performance for the uas;
+	//the set performance for the uas.
+	private UASPerformance uasPerformance;
 	
 	//parameters for UAS's sensing capability. They are the result of the sensor subsystem.
 	private SenseParas senseParas;
 
+	private Bag achievedWaypoints;
+	
 	//parameters for navigation
 	private Waypoint nextWp;
 	private Waypoint apWp = null;//for auto-pilot
-
-	
 	
 /*************************************************************************************************/
 	//parameters for recording information about simulation
@@ -73,7 +69,7 @@ public class UAS extends Entity
 		this.location=location;
 		this.uasPerformance = uasPerformance;
 		this.UASVelocity = uasVelocity; 
-		this.senseParas = senseParas;
+		this.setSenseParas(senseParas);
 		
 		this.oldUASVelocity= uasVelocity;
 		this.oldLocation= location;
@@ -128,6 +124,13 @@ public class UAS extends Entity
     }
 
 //**************************************************************************
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
 	
 	public SensorSet getSensorSet() {
 		return sensorSet;
@@ -162,33 +165,22 @@ public class UAS extends Entity
 		this.ssa = ss;
 	}
 
-	public UASPerformance getStats() {
+	public SenseParas getSenseParas() {
+		return senseParas;
+	}
+
+	public void setSenseParas(SenseParas senseParas) {
+		this.senseParas = senseParas;
+	}
+	
+	public UASPerformance getUasPerformance() {
 		return uasPerformance;
 	}
 
-
-	public void setStats(UASPerformance stats) {
-		this.uasPerformance = stats;
-	}
-
-
-	
-	public double getViewingRange() {
-		return this.senseParas.getViewingRange();
-	}
-
-	public void setViewingRange(double viewingRange) {
-		this.senseParas.setViewingRange(viewingRange);
+	public void setUasPerformance(UASPerformance performance) {
+		this.uasPerformance = performance;
 	}
 	
-	public double getViewingAngle() {
-		return this.senseParas.getViewingAngle();
-	}
-
-	public void setViewingAngle(double viewingAngle) {
-		this.senseParas.setViewingAngle(viewingAngle);
-	}
-		
 	public Double3D getOldVelocity() {
 		return oldUASVelocity.getVelocity();
 	}
@@ -223,15 +215,6 @@ public class UAS extends Entity
 		return achievedWaypoints;
 	}
 
-
-	public UASPerformance getUasPerformance() {
-		return uasPerformance;
-	}
-
-	public void setUasPerformance(UASPerformance performance) {
-		this.uasPerformance = performance;
-	}
-	
 	public double getTempDistanceToDanger() {
 		return tempDistanceToDanger;
 	}
@@ -280,15 +263,8 @@ public class UAS extends Entity
 		this.apWp = apWp;
 	}
 
-	public SAAModel getState() {
-		return state;
-	}
 
-	public void setState(SAAModel state) {
-		this.state = state;
-	}
-
-
+	
     public void dealWithTermination()
 	{
     	int noActiveAgents =0;
@@ -307,13 +283,5 @@ public class UAS extends Entity
 			state.kill();
 		}
 	 }
-
-	public String getAlias() {
-		return alias;
-	}
-
-	public void setAlias(String alias) {
-		this.alias = alias;
-	}
 
 }

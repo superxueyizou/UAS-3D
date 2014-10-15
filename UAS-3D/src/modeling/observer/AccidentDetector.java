@@ -24,15 +24,14 @@ import sim.util.Double3D;
 public class AccidentDetector implements Constants,Steppable
 {
 	private static final long serialVersionUID = 1L;
-
-	private File accidentLog = new File("AccidentLog.txt");
-	private PrintStream ps;
 	
-	private SAAModel state;
+	private PrintStream ps;
 	private int noAccidents=0;	
+	private String accidentLogFileName="AccidentLog.txt";
 	
 	public AccidentDetector()
 	{
+		File accidentLog = new File(accidentLogFileName);
 		try{
 			ps= new PrintStream(new FileOutputStream(accidentLog));
 		}
@@ -42,6 +41,24 @@ public class AccidentDetector implements Constants,Steppable
 			return;
 		}
 				
+	}
+	
+	public void reset()
+	{
+		noAccidents=0;
+		if(ps!=null)
+		{
+			ps.close();
+		}
+		File accidentLog = new File(accidentLogFileName);
+		try{
+			ps= new PrintStream(new FileOutputStream(accidentLog));
+		}
+		catch(FileNotFoundException e)
+		{
+			System.out.print("File not found!");
+			return;
+		}
 	}
 
 	/* (non-Javadoc)
@@ -54,45 +71,64 @@ public class AccidentDetector implements Constants,Steppable
 		{
 			return;
 		}
-		this.state = (SAAModel)simState;		
-		UAS uas1;
-				
-        outerLoop:
-	    for(int i=0; i<state.uasBag.size(); i++)
-		{		    	
-			uas1= (UAS)state.uasBag.get(i);
-			if(!uas1.isActive)
+		SAAModel state = (SAAModel)simState;		
+		
+		UAS ownship=(UAS) state.uasBag.get(0);
+
+		for (int k = 1; k<state.uasBag.size(); k++)
+		{
+			UAS intruder=(UAS)state.uasBag.get(k);
+			if(!intruder.isActive)
 			{
 				continue;
 			}
-			
-			/************
-			 * test if there is a collision with other alive UAS
-			 */
-			for (int k = i+1; k<state.uasBag.size(); k++)
+			if (detectCollisionBetweenUAS(ownship, intruder))
 			{
-				UAS uas2=(UAS)state.uasBag.get(k);
-				if(!uas2.isActive)
-				{
-					continue;
-				}
-				if (detectCollisionBetweenUAS(uas1, uas2))
-				{
-					addLog(Constants.AccidentType.CLASHWITHOTHERUAS, uas1.getID(), state.schedule.getSteps(), uas1.getLocation(), "the other UAS's ID is"+uas2.getID());
-					noAccidents++;
-					uas1.isActive=false;
-					uas2.isActive=false;
-					continue outerLoop;
-				}
+				addLog(Constants.AccidentType.CLASHWITHOTHERUAS, ownship.getAlias(), state.schedule.getSteps(), ownship.getLocation(), "the other UAS's is"+intruder.getAlias());
+				noAccidents++;
+				ownship.isActive=false;
+				intruder.isActive=false;
+				break;
 			}
-							
 		}
+			
+//		UAS uas1;
+//        outerLoop:
+//	    for(int i=0; i<state.uasBag.size(); i++)
+//		{		    	
+//			uas1= (UAS)state.uasBag.get(i);
+//			if(!uas1.isActive)
+//			{
+//				continue;
+//			}
+//			
+//			/************
+//			 * test if there is a collision with other alive UAS
+//			 */
+//			for (int k = i+1; k<state.uasBag.size(); k++)
+//			{
+//				UAS uas2=(UAS)state.uasBag.get(k);
+//				if(!uas2.isActive)
+//				{
+//					continue;
+//				}
+//				if (detectCollisionBetweenUAS(uas1, uas2))
+//				{
+//					addLog(Constants.AccidentType.CLASHWITHOTHERUAS, uas1.getID(), state.schedule.getSteps(), uas1.getLocation(), "the other UAS's ID is"+uas2.getID());
+//					noAccidents++;
+//					uas1.isActive=false;
+//					uas2.isActive=false;
+//					continue outerLoop;
+//				}
+//			}
+//							
+//		}
 
 	}
 	
-	public void addLog(AccidentType t, int uasID, long step, Double3D coor, String str)
+	public void addLog(AccidentType t, String ownshipAlias, long step, Double3D coor, String str)
 	{
-		ps.println(t.toString() +":uas"+uasID + "; time:"+step+"steps; location: ("+coor.x+" , "+coor.y+" , "+coor.z+")" + str);
+		ps.println(t.toString() +": "+ownshipAlias + "; time:"+step+"steps; location: ("+coor.x+" , "+coor.y+" , "+coor.z+")" + str);
 	}
 	
 	

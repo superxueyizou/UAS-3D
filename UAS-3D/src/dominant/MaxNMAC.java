@@ -36,51 +36,33 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
       
         DoubleVectorIndividual ind2 = (DoubleVectorIndividual)ind;
              
-        double ownshipVx= ind2.genome[0];
-        double ownshipVy= ind2.genome[1];
-        double ownshipVz= ind2.genome[2];
+        double ownshipVy= ind2.genome[0];
+        double ownshipGs= ind2.genome[1];
+        double ownshipBearing= ind2.genome[2];
         
-        double intruder1OffsetX= ind2.genome[3];
-        double intruder1OffsetY= ind2.genome[4];
-        double intruder1OffsetZ= ind2.genome[5];
-        double intruder1Vx= ind2.genome[6];
-        double intruder1Vy= ind2.genome[7];
-        double intruder1Vz= ind2.genome[8];
-        
-        double intruder2OffsetX= ind2.genome[9];
-        double intruder2OffsetY= ind2.genome[10];
-        double intruder2OffsetZ= ind2.genome[11];
-        double intruder2Vx= ind2.genome[12];
-        double intruder2Vy= ind2.genome[13];
-        double intruder2Vz= ind2.genome[14];
-				
+        double intruder1OffsetY= ind2.genome[3];
+        double intruder1R= ind2.genome[4];
+        double intruder1Theta= ind2.genome[5];
+        double intruder1Vy= ind2.genome[6];
+        double intruder1Gs= ind2.genome[7];
+        double intruder1Bearing= ind2.genome[8];
+ 				
 		Configuration config = Configuration.getInstance();
 		
-		config.ownshipConfig.ownshipVx=ownshipVx;
 		config.ownshipConfig.ownshipVy=ownshipVy;
-		config.ownshipConfig.ownshipVz=ownshipVz;
+		config.ownshipConfig.ownshipGs=ownshipGs;		
+		config.ownshipConfig.ownshipBearing=ownshipBearing;
 		
-		IntruderConfig intruderConfig1=new IntruderConfig();
-		intruderConfig1.intruderOffsetX=intruder1OffsetX;
+		IntruderConfig intruderConfig1=new IntruderConfig();		
 		intruderConfig1.intruderOffsetY=intruder1OffsetY;
-		intruderConfig1.intruderOffsetZ=intruder1OffsetZ;
-		intruderConfig1.intruderVx=intruder1Vx;
+		intruderConfig1.intruderR=intruder1R;
+		intruderConfig1.intruderTheta=intruder1Theta;
 		intruderConfig1.intruderVy=intruder1Vy;
-		intruderConfig1.intruderVz=intruder1Vz;
+		intruderConfig1.intruderGs=intruder1Gs;
+		intruderConfig1.intruderBearing=intruder1Bearing;
 		config.intrudersConfig.put("intruder1", intruderConfig1);
-		
-		IntruderConfig intruderConfig2=new IntruderConfig();
-		intruderConfig2.intruderOffsetX=intruder2OffsetX;
-		intruderConfig2.intruderOffsetY=intruder2OffsetY;
-		intruderConfig2.intruderOffsetZ=intruder2OffsetZ;
-		intruderConfig2.intruderVx=intruder2Vx;
-		intruderConfig2.intruderVy=intruder2Vy;
-		intruderConfig2.intruderVz=intruder2Vz;
-		config.intrudersConfig.put("intruder2", intruderConfig2);
-		
+				
 		SAAModel simState= SAAModel.getInstance(785945568, config, false); 	
-
-
     	SimInitializer.generateSimulation(simState, config);   		
 		simState.start();	
 		do
@@ -93,49 +75,45 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
 
 		simState.finish();
 		
-		double globalMinDistanceToDanger=Double.MAX_VALUE;
-		for(int j=0; j<simState.uasBag.size(); j++)
-		{
-			UAS uas = (UAS)simState.uasBag.get(j);
-			double minDistanceToDanger=uas.getMinDistanceToDanger();
-			if(minDistanceToDanger<globalMinDistanceToDanger)
-			{
-				globalMinDistanceToDanger = minDistanceToDanger;
-			}
-			
-		}	
+		UAS ownship = (UAS)simState.uasBag.get(0);
+		
+//		double globalMinDistanceToDanger=Double.MAX_VALUE;
+//		for(int j=0; j<simState.uasBag.size(); j++)
+//		{
+//			UAS uas = (UAS)simState.uasBag.get(j);
+//			double minDistanceToDanger=uas.getMinDistanceToDanger();
+//			if(minDistanceToDanger<globalMinDistanceToDanger)
+//			{
+//				globalMinDistanceToDanger = minDistanceToDanger;
+//			}
+//			
+//		}	
 //		System.out.println(globalMinDistanceToDanger);
-		simState.reset();
+		
 
-		float fitness = (float) (10000-globalMinDistanceToDanger);		
+		float fitness = (float) (1.0/(1+ownship.getMinDistanceToDanger()));		
         
         if (!(ind2.fitness instanceof SimpleFitness))
             state.output.fatal("Whoa!  It's not a SimpleFitness!!!",null);
         
         ((SimpleFitness)ind2.fitness).setFitness(   state,            
 										            fitness,/// ...the fitness...
-										            (fitness==10000));///... is the individual ideal?  Indicate here...
+										            (fitness==1));///... is the individual ideal?  Indicate here...
         
-        ind2.evaluated = true;
-//        System.out.println();
-        
-//        if(fitness >0.9)
-//        {
-//        	StringBuilder dataItem = new StringBuilder();
-//        	dataItem.append(state.generation+",");
-//        	for (int i=0; i< ind2.genome.length-1; i++)
-//        	{
-//        		dataItem.append(ind2.genome[i]+",");
-//        		
-//        	}
-//        	dataItem.append(fitness+",");
-//        	dataItem.append(simState.getaDetector().getNoAccidents()+",");
-//        	dataItem.append(ind2.genome[ind2.genome.length-1]);
-//        	Simulation.simDataSet.add(dataItem.toString());
-//        
-//        }
-//        MyStatistics.accidents[state.generation]+= simState.getaDetector().getNoAccidents();
+        StringBuilder dataItem = new StringBuilder();
+    	dataItem.append(state.generation+",");
+    	for (int i=0; i< ind2.genome.length-1; i++)
+    	{
+    		dataItem.append(ind2.genome[i]+",");
+    		
+    	}
+    	dataItem.append(fitness+",");
+    	dataItem.append(simState.getaDetector().getNoAccidents());
+    	Simulation.simDataSet.add(dataItem.toString());        
+        MyStatistics.accidents[state.generation]+= simState.getaDetector().getNoAccidents();
 
+        ind2.evaluated = true;
+        simState.reset();//reset the simulation. Very important!
 	}
 
 }

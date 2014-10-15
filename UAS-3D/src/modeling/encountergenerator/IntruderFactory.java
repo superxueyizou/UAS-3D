@@ -1,7 +1,7 @@
 package modeling.encountergenerator;
 
 import saa.AutoPilot;
-import saa.collsionavoidance.ACASX;
+import saa.collsionavoidance.ACASX2D;
 import saa.collsionavoidance.ACASX3D;
 import saa.collsionavoidance.CollisionAvoidanceAlgorithm;
 import saa.collsionavoidance.CollisionAvoidanceAlgorithmAdapter;
@@ -26,13 +26,14 @@ public class IntruderFactory {
 	
 	public static UAS generateIntruder(SAAModel state, UAS ownship, String intruderAlias,IntruderConfig intruderConfig)
 	{	
-		Double3D location=ownship.getLocation().add(new Double3D(intruderConfig.intruderOffsetX, intruderConfig.intruderOffsetY, intruderConfig.intruderOffsetZ));			
-		UASVelocity intruderVelocity = new UASVelocity(new Double3D(intruderConfig.intruderVx, intruderConfig.intruderVy, intruderConfig.intruderVz));
+		Double3D location=ownship.getLocation().add(new Double3D(intruderConfig.intruderR*Math.cos(Math.toRadians(intruderConfig.intruderTheta)), intruderConfig.intruderOffsetY, intruderConfig.intruderR*Math.sin(Math.toRadians(intruderConfig.intruderTheta))));			
+		UASVelocity intruderVelocity = new UASVelocity(new Double3D(intruderConfig.intruderGs*Math.cos(Math.toRadians(intruderConfig.intruderBearing)), intruderConfig.intruderVy, intruderConfig.intruderGs*Math.sin(Math.toRadians(intruderConfig.intruderBearing))));
 		UASPerformance intruderPerformance = new UASPerformance(intruderConfig.intruderStdDevX, intruderConfig.intruderStdDevY,intruderConfig.intruderStdDevZ,
 				intruderConfig.intruderMaxSpeed, intruderConfig.intruderMinSpeed, intruderConfig.intruderMaxClimb, intruderConfig.intruderMaxDescent,intruderConfig.intruderMaxTurning, intruderConfig.intruderMaxAcceleration, intruderConfig.intruderMaxDeceleration);
 		SenseParas intruderSenseParas = null;
 		
 		UAS intruder = new UAS(state.getNewID(),location, intruderVelocity,intruderPerformance, intruderSenseParas);
+		intruder.setAlias(intruderAlias);
 		
 		SensorSet sensorSet = new SensorSet();
 		if((intruderConfig.intruderSensorSelection&0B10000) == 0B10000)
@@ -62,8 +63,8 @@ public class IntruderFactory {
 		CollisionAvoidanceAlgorithm caa;
 		switch(intruderConfig.intruderCollisionAvoidanceAlgorithmSelection)
 		{
-			case "ACASXAvoidanceAlgorithm":
-				caa= new ACASX(state, intruder);
+			case "ACASX2DAvoidanceAlgorithm":
+				caa= new ACASX2D(state, intruder);
 				break;
 			case "ACASX3DAvoidanceAlgorithm":
 				caa= new ACASX3D(state, intruder);

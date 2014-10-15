@@ -29,7 +29,6 @@ public class ACASX3DGen
 		ACASX3DDTMC dtmc = new ACASX3DDTMC();
 		long time4 = System.currentTimeMillis();
 		System.out.println("DTMC building Done! The running time is "+ (time4-time3)/1000 +" senconds.");
-//		System.out.println("DTMC building Done! The running time is "+ (time4-startTime)/1000 +" senconds.");
 		DTMCValueIteration dtmcVI = new DTMCValueIteration(dtmc);
 		long time5 = System.currentTimeMillis();
 		System.out.println("DTMC Value Iteration Done! The running time is "+ (time5-time4)/1000 +" senconds.");

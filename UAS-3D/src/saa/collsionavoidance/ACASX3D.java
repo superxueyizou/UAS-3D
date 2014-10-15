@@ -128,8 +128,8 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 				maxQValue=value;
 				bestActionCode=entry.getKey();
 			}
-		}			
-		ra=bestActionCode;				
+		}	
+		ra=bestActionCode;	
 		hostUAS.getAp().setActionCode(bestActionCode);
 	}
 
@@ -220,6 +220,7 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 		assert (Math.abs(h)<=ACASX3DMDP.UPPER_H);
 		assert (Math.abs(oVy)<=ACASX3DMDP.UPPER_VY);
 		assert (Math.abs(iVy)<=ACASX3DMDP.UPPER_VY);
+		assert (ra>=0);
 		
 		Map<Integer, Double> qValuesMap = new TreeMap<>();
 		ArrayList<AbstractMap.SimpleEntry<Integer, Double>> actionMapValues = new ArrayList<AbstractMap.SimpleEntry<Integer, Double>>();
@@ -247,11 +248,20 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 					for(Entry<Integer, Double> entryTime_prob :entryTimeDistribution.entrySet())
 					{
 						int t=entryTime_prob.getKey();
-						double entryTimeProb= entryTime_prob.getValue();
-						
-//						System.out.println((t*lookupTable3D.numCStates)+"    "+ approxCState+"     "+approxCStateOrder);
-						int index=lookupTable3D.indexArr.get((t*lookupTable3D.numCStates)+ approxCStateOrder);
-						int numActions = lookupTable3D.indexArr.get((t*lookupTable3D.numCStates)+approxCStateOrder+1)-index;									
+						double entryTimeProb= entryTime_prob.getValue();					
+
+						int index=0, numActions=0;
+						try
+						{
+							index =lookupTable3D.indexArr.get((t*lookupTable3D.numCStates)+ approxCStateOrder);
+							numActions = lookupTable3D.indexArr.get((t*lookupTable3D.numCStates)+approxCStateOrder+1)-index;	
+						}
+						catch(ArrayIndexOutOfBoundsException e)
+						{
+							System.out.println((t*lookupTable3D.numCStates)+"    "+ approxCState+"     "+approxCStateOrder);
+							System.exit(-1);
+						}
+														
 						for (int n=0;n<numActions;n++) 
 						{
 							double qValue= lookupTable3D.costArr.get(index+n);

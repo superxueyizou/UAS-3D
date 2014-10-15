@@ -138,7 +138,7 @@ public class AutoPilot implements Steppable
 		hostUAS.setOldVelocity(new Double3D(vx,vy,vz));
 		hostUAS.setVelocity(new Double3D(groundVelocity.x, newVy,groundVelocity.y));
 		wp.setLocation(new Double3D(x , y,z));	
-		wp.setAction(actionCode+30);//30 for ACASX
+		wp.setAction(actionCode+30);//30 for ACASX2D
 		return wp;
 	}
 	

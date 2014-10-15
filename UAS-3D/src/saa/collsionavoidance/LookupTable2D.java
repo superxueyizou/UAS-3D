@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import saa.collsionavoidance.mdpLite.ACASXMDP;
+import saa.collsionavoidance.acasx2d.ACASXMDP;
 
-public class LookupTable
+public class LookupTable2D
 {
-	private static LookupTable lookupTable;
+	private static LookupTable2D lookupTable2D;
 	
 
 	public ArrayList<Integer> indexArr;
@@ -20,7 +20,7 @@ public class LookupTable
 	public BufferedReader costFileReader = null;
 	public BufferedReader actionFileReader = null;
 	
-	private LookupTable()
+	private LookupTable2D()
 	{
 		System.out.println("Reading look-up table...!");
 		long startTime = System.currentTimeMillis();		
@@ -29,9 +29,9 @@ public class LookupTable
 		indexArr= new ArrayList<>();
 		try 
         {
-			indexFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/mdpLite/generatedFiles/indexFile")));
-			costFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/mdpLite/generatedFiles/costFile")));
-			actionFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/mdpLite/generatedFiles/actionFile")));
+			indexFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx2d/generatedFiles/indexFile")));
+			costFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx2d/generatedFiles/costFile")));
+			actionFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx2d/generatedFiles/actionFile")));
 
 			String buffer=null;
 			while((buffer=indexFileReader.readLine())!=null)
@@ -87,12 +87,12 @@ public class LookupTable
 		System.out.println("Done! The time for reading look-up table is "+ (endTime-startTime)/1000 +" senconds.");
 	}
 
-	public static LookupTable getInstance()
+	public static LookupTable2D getInstance()
 	{
-		if(lookupTable==null)
+		if(lookupTable2D==null)
 		{
-			lookupTable= new LookupTable();
+			lookupTable2D= new LookupTable2D();
 		}
-		return lookupTable;
+		return lookupTable2D;
 	}
 }

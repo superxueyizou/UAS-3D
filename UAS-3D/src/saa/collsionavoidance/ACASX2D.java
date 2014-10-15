@@ -13,9 +13,9 @@ import java.util.TreeMap;
 
 import modeling.SAAModel;
 import modeling.uas.UAS;
-import saa.collsionavoidance.mdpLite.ACASXMDP;
-import saa.collsionavoidance.mdpLite.ACASXState;
-import saa.collsionavoidance.mdpLite.ACASXUtils;
+import saa.collsionavoidance.acasx2d.ACASXMDP;
+import saa.collsionavoidance.acasx2d.ACASXState;
+import saa.collsionavoidance.acasx2d.ACASXUtils;
 import sim.engine.SimState;
 import sim.util.Double2D;
 
@@ -24,7 +24,7 @@ import sim.util.Double2D;
  * @author Xueyi
  *
  */
-public class ACASX extends CollisionAvoidanceAlgorithm
+public class ACASX2D extends CollisionAvoidanceAlgorithm
 {
 	/**
 	 * 
@@ -33,10 +33,10 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 	private SAAModel state; 
 	private UAS hostUAS;
 	private UAS intruder=null;
-	private LookupTable lookupTable;
+	private LookupTable2D lookupTable;
 	private int ra=0;//"COC"
 	
-	public ACASX(SimState simstate, UAS uas) 
+	public ACASX2D(SimState simstate, UAS uas) 
 	{
 		state = (SAAModel) simstate;
 		hostUAS = uas;	
@@ -49,7 +49,7 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 	{
 		if(state.uasBag.size()!=2)
 		{
-			System.err.println("ACASX.java: only two UAVs are allowed in this setting");
+			System.err.println("ACASX2D.java: only two UAVs are allowed in this setting");
 		}
 		for(int i=0; i<state.uasBag.size(); i++)
 		{
@@ -65,7 +65,7 @@ public class ACASX extends CollisionAvoidanceAlgorithm
 		
 		}
 	
-		lookupTable=LookupTable.getInstance();
+		lookupTable=LookupTable2D.getInstance();
 	}	
 	
 	

@@ -97,8 +97,9 @@ public class SAAModel extends SimState
 		newID = 0;
 		uasBag.clear();
 		allEntities.clear();
-		schedule.clear();
+		schedule.reset();
 		environment3D.clear(); //clear the environment3D
+		aDetector.reset();
 	}
 	
 

@@ -6,7 +6,7 @@ parent.0		= D:/MyLibrary/EclipseWorkspace/ECJ/src/ec/simple/simple.params
 stat.file = $MaxNMACStatics.stat
 stat.num-children = 1
 stat.child.0 = dominant.MyStatistics
-stat.child.0.file = $MaxNMACStatics2.csv
+stat.child.0.file = $MaxNMACStatics2.stat
 
 pop.subpop.0.size = 5000
 generations = 50
@@ -16,58 +16,39 @@ pop.subpop.0.species.ind	= ec.vector.DoubleVectorIndividual
 pop.subpop.0.species.fitness 	= ec.simple.SimpleFitness	
 
 # the size of simulation parameters
-pop.subpop.0.species.genome-size	=15
+pop.subpop.0.species.genome-size	=9
 
-#ownship Vx
-pop.subpop.0.species.min-gene.0 = 169
-pop.subpop.0.species.max-gene.0 = 304
 #ownship Vy
-pop.subpop.0.species.min-gene.1 =-67
-pop.subpop.0.species.max-gene.1 =58
-#ownship Vz
-pop.subpop.0.species.min-gene.2 = 169
-pop.subpop.0.species.max-gene.2 = 304
+pop.subpop.0.species.min-gene.0 = -67
+pop.subpop.0.species.max-gene.0 = 58
+#ownship Gs
+pop.subpop.0.species.min-gene.1 =169
+pop.subpop.0.species.max-gene.1 =304
+#ownship Bearing
+pop.subpop.0.species.min-gene.2 = 0
+pop.subpop.0.species.max-gene.2 = 0
 
-#intruder1 offsetX  
-pop.subpop.0.species.min-gene.3 = 10000 
-pop.subpop.0.species.max-gene.3 = 15000
 #intruder1 offsetY  
-pop.subpop.0.species.min-gene.4 = -500 
-pop.subpop.0.species.max-gene.4 = 500 
-#intruder1 offsetZ 
-pop.subpop.0.species.min-gene.5 =-500
-pop.subpop.0.species.max-gene.5 =500
-#intruder1 Vx 
-pop.subpop.0.species.min-gene.6 = -304
-pop.subpop.0.species.max-gene.6 = -169
+pop.subpop.0.species.min-gene.3 = -1000 
+pop.subpop.0.species.max-gene.3 = 1000 
+#intruder1 R 
+pop.subpop.0.species.min-gene.4 = 6000 
+pop.subpop.0.species.max-gene.4 = 15000
+#intruder1 theta
+pop.subpop.0.species.min-gene.5 =-180
+pop.subpop.0.species.max-gene.5 =180
 #intruder1 Vy 
-pop.subpop.0.species.min-gene.7 = -67
-pop.subpop.0.species.max-gene.7 = 58
-#intruder1 Vz 
-pop.subpop.0.species.min-gene.8 = -304
-pop.subpop.0.species.max-gene.8 = 304
+pop.subpop.0.species.min-gene.6 = -67
+pop.subpop.0.species.max-gene.6 = 58
+#intruder1 Gs 
+pop.subpop.0.species.min-gene.7 = 169
+pop.subpop.0.species.max-gene.7 = 304
+#intruder1 Bearing 
+pop.subpop.0.species.min-gene.8 = -180
+pop.subpop.0.species.max-gene.8 = 180
 
-#intruder2 offsetX  
-pop.subpop.0.species.min-gene.9 = 10000 
-pop.subpop.0.species.max-gene.9 = 15000
-#intruder2 offsetY  
-pop.subpop.0.species.min-gene.10 = -500 
-pop.subpop.0.species.max-gene.10 = 500 
-#intruder2 offsetZ 
-pop.subpop.0.species.min-gene.11 =-500
-pop.subpop.0.species.max-gene.11 =500
-#intruder2 Vx 
-pop.subpop.0.species.min-gene.12 = -304
-pop.subpop.0.species.max-gene.12 = -169
-#intruder2 Vy 
-pop.subpop.0.species.min-gene.13 = -67
-pop.subpop.0.species.max-gene.13 = 58
-#intruder2 Vz 
-pop.subpop.0.species.min-gene.14 = -304
-pop.subpop.0.species.max-gene.14 = 304
-
-pop.subpop.0.species.min-gene = -304
-pop.subpop.0.species.max-gene = 304
+pop.subpop.0.species.min-gene = -1000
+pop.subpop.0.species.max-gene = 15000
 
 pop.subpop.0.species.crossover-type	= two
 pop.subpop.0.species.crossover-likelihood	= 0.8

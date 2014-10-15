@@ -1,31 +1,25 @@
 package configuration;
 
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
 import java.awt.BorderLayout;
-import java.awt.event.ActionListener;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-
-
-import java.awt.Color;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JToggleButton;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
 
 
 public class IntruderConfigurator extends JDialog  
@@ -58,47 +52,23 @@ public class IntruderConfigurator extends JDialog
 			contentPanel.add(positionPanel);
 			positionPanel.setLayout(null);
 			
-			JLabel lblOffsetX = new JLabel("OffsetX");
-			lblOffsetX.setBounds(10, 21, 44, 15);
-			positionPanel.add(lblOffsetX);
-			
-			final JLabel offsetXLabel = new JLabel(""+intruderConfig.intruderOffsetX);
-			offsetXLabel.setBounds(234, 21, 48, 15);
-			positionPanel.add(offsetXLabel);
-			
-			JSlider selfOffsetXSlider = new JSlider();
-			selfOffsetXSlider.setBounds(64, 21, 160, 16);
-			positionPanel.add(selfOffsetXSlider);
-			selfOffsetXSlider.setSnapToTicks(true);
-			selfOffsetXSlider.setPaintLabels(true);		
-			selfOffsetXSlider.setMaximum(30000);
-			selfOffsetXSlider.setMinimum(-10000);
-			selfOffsetXSlider.setValue((int)(intruderConfig.intruderOffsetX));
-			selfOffsetXSlider.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					JSlider source = (JSlider) e.getSource();
-					intruderConfig.intruderOffsetX = source.getValue();
-					offsetXLabel.setText(""+intruderConfig.intruderOffsetX);
-				}
-			});
-			
 			JLabel lblOffsetY = new JLabel("OffsetY");
-			lblOffsetY.setBounds(10, 42, 44, 15);
+			lblOffsetY.setBounds(10, 21, 44, 15);
 			positionPanel.add(lblOffsetY);
 			
 			final JLabel offsetYLabel = new JLabel(""+intruderConfig.intruderOffsetY);
-			offsetYLabel.setBounds(234, 42, 48, 15);
+			offsetYLabel.setBounds(234, 21, 48, 15);
 			positionPanel.add(offsetYLabel);
 			
-			JSlider selfOffsetYSlider = new JSlider();
-			selfOffsetYSlider.setBounds(64, 42, 160, 16);
-			positionPanel.add(selfOffsetYSlider);
-			selfOffsetYSlider.setSnapToTicks(true);
-			selfOffsetYSlider.setPaintLabels(true);		
-			selfOffsetYSlider.setMaximum(500);
-			selfOffsetYSlider.setMinimum(-500);
-			selfOffsetYSlider.setValue((int)(intruderConfig.intruderOffsetY));
-			selfOffsetYSlider.addChangeListener(new ChangeListener() {
+			JSlider intruderOffsetYSlider = new JSlider();
+			intruderOffsetYSlider.setBounds(64, 21, 160, 16);
+			positionPanel.add(intruderOffsetYSlider);
+			intruderOffsetYSlider.setSnapToTicks(true);
+			intruderOffsetYSlider.setPaintLabels(true);		
+			intruderOffsetYSlider.setMaximum(500);
+			intruderOffsetYSlider.setMinimum(-500);
+			intruderOffsetYSlider.setValue((int)(intruderConfig.intruderOffsetY));
+			intruderOffsetYSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					intruderConfig.intruderOffsetY = source.getValue();
@@ -106,27 +76,51 @@ public class IntruderConfigurator extends JDialog
 				}
 			});
 			
-			JLabel lblOffsetZ = new JLabel("OffsetZ");
-			lblOffsetZ.setBounds(10, 65, 44, 15);
-			positionPanel.add(lblOffsetZ);
+			JLabel lblR = new JLabel("R");
+			lblR.setBounds(10, 42, 44, 15);
+			positionPanel.add(lblR);
 			
-			final JLabel offsetZLabel = new JLabel(""+intruderConfig.intruderOffsetZ);
-			offsetZLabel.setBounds(234, 65, 48, 15);
-			positionPanel.add(offsetZLabel);
+			final JLabel rLabel = new JLabel(""+intruderConfig.intruderR);
+			rLabel.setBounds(234, 42, 48, 15);
+			positionPanel.add(rLabel);
 			
-			JSlider selfOffsetZSlider = new JSlider();
-			selfOffsetZSlider.setBounds(64, 64, 160, 16);
-			positionPanel.add(selfOffsetZSlider);
-			selfOffsetZSlider.setSnapToTicks(true);
-			selfOffsetZSlider.setPaintLabels(true);		
-			selfOffsetZSlider.setMaximum(5000);
-			selfOffsetZSlider.setMinimum(-5000);
-			selfOffsetZSlider.setValue((int)(intruderConfig.intruderOffsetZ));
-			selfOffsetZSlider.addChangeListener(new ChangeListener() {
+			JSlider intruderRSlider = new JSlider();
+			intruderRSlider.setBounds(64, 42, 160, 16);
+			positionPanel.add(intruderRSlider);
+			intruderRSlider.setSnapToTicks(true);
+			intruderRSlider.setPaintLabels(true);		
+			intruderRSlider.setMaximum(15000);
+			intruderRSlider.setMinimum(6000);
+			intruderRSlider.setValue((int)(intruderConfig.intruderR));
+			intruderRSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
-					intruderConfig.intruderOffsetZ = source.getValue();
-					offsetZLabel.setText(""+intruderConfig.intruderOffsetZ);
+					intruderConfig.intruderR = source.getValue();
+					rLabel.setText(""+intruderConfig.intruderR);
+				}
+			});
+			
+			JLabel lblTheta = new JLabel("Theta");
+			lblTheta.setBounds(10, 65, 44, 15);
+			positionPanel.add(lblTheta);
+			
+			final JLabel thetaLabel = new JLabel(""+intruderConfig.intruderTheta);
+			thetaLabel.setBounds(234, 65, 48, 15);
+			positionPanel.add(thetaLabel);
+			
+			JSlider intruderThetaSlider = new JSlider();
+			intruderThetaSlider.setBounds(64, 64, 160, 16);
+			positionPanel.add(intruderThetaSlider);
+			intruderThetaSlider.setSnapToTicks(true);
+			intruderThetaSlider.setPaintLabels(true);		
+			intruderThetaSlider.setMaximum(180);
+			intruderThetaSlider.setMinimum(-180);
+			intruderThetaSlider.setValue((int)(intruderConfig.intruderTheta));
+			intruderThetaSlider.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					JSlider source = (JSlider) e.getSource();
+					intruderConfig.intruderTheta = source.getValue();
+					thetaLabel.setText(""+intruderConfig.intruderTheta);
 				}
 			});
 			
@@ -264,16 +258,16 @@ public class IntruderConfigurator extends JDialog
 			contentPanel.add(collisionAvoidanceAlgorithmSelectionPanel);
 			collisionAvoidanceAlgorithmSelectionPanel.setLayout(null);			
 			
-			JRadioButton rdbtnACASXAvoidanceAlgorithm = new JRadioButton("ACASX");
-			rdbtnACASXAvoidanceAlgorithm.setBounds(6, 17, 94, 23);
-			rdbtnACASXAvoidanceAlgorithm.setSelected(intruderConfig.intruderCollisionAvoidanceAlgorithmSelection == "ACASXAvoidanceAlgorithm");
-			collisionAvoidanceAlgorithmSelectionPanel.add(rdbtnACASXAvoidanceAlgorithm);
-			collisionAvoidanceAlgorithmGroup.add(rdbtnACASXAvoidanceAlgorithm);
-			rdbtnACASXAvoidanceAlgorithm.addActionListener(new ActionListener() {
+			JRadioButton rdbtnACASX2DAvoidanceAlgorithm = new JRadioButton("ACASX2D");
+			rdbtnACASX2DAvoidanceAlgorithm.setBounds(6, 17, 94, 23);
+			rdbtnACASX2DAvoidanceAlgorithm.setSelected(intruderConfig.intruderCollisionAvoidanceAlgorithmSelection == "ACASX2DAvoidanceAlgorithm");
+			collisionAvoidanceAlgorithmSelectionPanel.add(rdbtnACASX2DAvoidanceAlgorithm);
+			collisionAvoidanceAlgorithmGroup.add(rdbtnACASX2DAvoidanceAlgorithm);
+			rdbtnACASX2DAvoidanceAlgorithm.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(((JRadioButton)e.getSource()).isSelected())
 					{
-						intruderConfig.intruderCollisionAvoidanceAlgorithmSelection = "ACASXAvoidanceAlgorithm";
+						intruderConfig.intruderCollisionAvoidanceAlgorithmSelection = "ACASX2DAvoidanceAlgorithm";
 					}
 				}
 			});
@@ -352,61 +346,23 @@ public class IntruderConfigurator extends JDialog
 			contentPanel.add(otherPanel);
 			otherPanel.setLayout(null);
 			
-			JLabel lblVx = new JLabel("VX");
-			lblVx.setBounds(10, 11, 27, 15);
-			otherPanel.add(lblVx);
-			
-			final JLabel vxLabel = new JLabel(""+intruderConfig.intruderVx);
-			vxLabel.setBounds(232, 11, 58, 15);
-			otherPanel.add(vxLabel);
-			
-			final JComboBox comboBox = new JComboBox();			
-			comboBox.setModel(new DefaultComboBoxModel(new String[] {"+", "-"}));
-			comboBox.setSelectedIndex(intruderConfig.intruderVx>0?0:1);
-			comboBox.setBounds(33, 8, 34, 20);
-			comboBox.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent e) {
-					intruderConfig.intruderVx = (comboBox.getSelectedIndex()==0?1:-1)*Math.abs(intruderConfig.intruderVx);
-					vxLabel.setText(""+intruderConfig.intruderVx);
-				}
-			});
-			otherPanel.add(comboBox);
-			
-		
-			
-			JSlider selfVxSlider = new JSlider();
-			selfVxSlider.setBounds(64, 11, 161, 16);
-			otherPanel.add(selfVxSlider);
-			selfVxSlider.setSnapToTicks(true);
-			selfVxSlider.setPaintLabels(true);		
-			selfVxSlider.setMaximum(304);
-			selfVxSlider.setMinimum(169);
-			selfVxSlider.setValue(Math.abs((int)(intruderConfig.intruderVx)));
-			selfVxSlider.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					JSlider source = (JSlider) e.getSource();
-					intruderConfig.intruderVx = (intruderConfig.intruderVx>0?1:-1)*source.getValue();
-					vxLabel.setText(""+intruderConfig.intruderVx);
-				}
-			});
-			
 			JLabel lblVy = new JLabel("VY");
-			lblVy.setBounds(10, 31, 37, 15);
+			lblVy.setBounds(10, 11, 37, 15);
 			otherPanel.add(lblVy);
 			
 			final JLabel vyLabel = new JLabel(""+intruderConfig.intruderVy);
-			vyLabel.setBounds(232, 31, 58, 15);
+			vyLabel.setBounds(242, 11, 48, 15);
 			otherPanel.add(vyLabel);
 		
-			JSlider selfVySlider = new JSlider();
-			selfVySlider.setBounds(64, 31, 161, 16);
-			otherPanel.add(selfVySlider);
-			selfVySlider.setSnapToTicks(true);
-			selfVySlider.setPaintLabels(true);		
-			selfVySlider.setMaximum(58);
-			selfVySlider.setMinimum(-67);
-			selfVySlider.setValue((int)(intruderConfig.intruderVy));
-			selfVySlider.addChangeListener(new ChangeListener() {
+			JSlider intruderVySlider = new JSlider();
+			intruderVySlider.setBounds(77, 11, 161, 16);
+			otherPanel.add(intruderVySlider);
+			intruderVySlider.setSnapToTicks(true);
+			intruderVySlider.setPaintLabels(true);		
+			intruderVySlider.setMaximum(58);
+			intruderVySlider.setMinimum(-67);
+			intruderVySlider.setValue((int)(intruderConfig.intruderVy));
+			intruderVySlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					intruderConfig.intruderVy = source.getValue();
@@ -415,48 +371,72 @@ public class IntruderConfigurator extends JDialog
 				}
 			});
 			
-			JLabel lblVz = new JLabel("VZ");
-			lblVz.setBounds(10, 51, 37, 15);
-			otherPanel.add(lblVz);
+			JLabel lblGs = new JLabel("GS");
+			lblGs.setBounds(10, 32, 27, 15);
+			otherPanel.add(lblGs);
 			
-			final JLabel vzLabel = new JLabel(""+intruderConfig.intruderVz);
-			vzLabel.setBounds(232, 51, 58, 15);
-			otherPanel.add(vzLabel);
-		
-			JSlider selfVzSlider = new JSlider();
-			selfVzSlider.setBounds(64, 51, 161, 16);
-			otherPanel.add(selfVzSlider);
-			selfVzSlider.setSnapToTicks(true);
-			selfVzSlider.setPaintLabels(true);		
-			selfVzSlider.setMaximum(58);
-			selfVzSlider.setMinimum(-67);
-			selfVzSlider.setValue((int)(intruderConfig.intruderVz));
-			selfVzSlider.addChangeListener(new ChangeListener() {
+			final JLabel gsLabel = new JLabel(""+intruderConfig.intruderGs);
+			gsLabel.setBounds(242, 32, 58, 15);
+			otherPanel.add(gsLabel);
+			
+			JSlider intruderGsSlider = new JSlider();
+			intruderGsSlider.setBounds(77, 32, 161, 16);			
+			intruderGsSlider.setSnapToTicks(true);
+			intruderGsSlider.setPaintLabels(true);		
+			intruderGsSlider.setMaximum(304);
+			intruderGsSlider.setMinimum(169);
+			intruderGsSlider.setValue((int)(intruderConfig.intruderGs));
+			intruderGsSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
-					intruderConfig.intruderVz = source.getValue();
-					vzLabel.setText(""+intruderConfig.intruderVz);
+					intruderConfig.intruderGs = source.getValue();
+					gsLabel.setText(""+intruderConfig.intruderGs);
+				}
+			});
+			otherPanel.add(intruderGsSlider);
+			
+			JLabel lblBearing = new JLabel("Bearing");
+			lblBearing.setBounds(10, 51, 57, 15);
+			otherPanel.add(lblBearing);
+			
+			final JLabel bearingLabel = new JLabel(""+intruderConfig.intruderBearing);
+			bearingLabel.setBounds(242, 51, 58, 15);
+			otherPanel.add(bearingLabel);
+		
+			JSlider intruderBearingSlider = new JSlider();
+			intruderBearingSlider.setBounds(77, 51, 161, 16);			
+			intruderBearingSlider.setSnapToTicks(true);
+			intruderBearingSlider.setPaintLabels(true);		
+			intruderBearingSlider.setMaximum(180);
+			intruderBearingSlider.setMinimum(-180);
+			intruderBearingSlider.setValue((int)(intruderConfig.intruderBearing));
+			intruderBearingSlider.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					JSlider source = (JSlider) e.getSource();
+					intruderConfig.intruderBearing = source.getValue();
+					bearingLabel.setText(""+intruderConfig.intruderBearing);
 
 				}
 			});
+			otherPanel.add(intruderBearingSlider);
 			
 			JLabel lblStdDevX = new JLabel("SDX");
 			lblStdDevX.setBounds(10, 71, 37, 15);
 			otherPanel.add(lblStdDevX);
 			
 			final JLabel stdDevXLabel = new JLabel(""+intruderConfig.intruderStdDevX);
-			stdDevXLabel.setBounds(232, 71, 58, 15);
+			stdDevXLabel.setBounds(242, 71, 58, 15);
 			otherPanel.add(stdDevXLabel);
 			
-			JSlider headOnStdDevXSlider = new JSlider();
-			headOnStdDevXSlider.setBounds(64, 71, 161, 16);
-			otherPanel.add(headOnStdDevXSlider);
-			headOnStdDevXSlider.setSnapToTicks(true);
-			headOnStdDevXSlider.setPaintLabels(true);		
-			headOnStdDevXSlider.setMaximum(15);
-			headOnStdDevXSlider.setMinimum(0);
-			headOnStdDevXSlider.setValue((int)(intruderConfig.intruderStdDevX));
-			headOnStdDevXSlider.addChangeListener(new ChangeListener() {
+			JSlider intruderStdDevXSlider = new JSlider();
+			intruderStdDevXSlider.setBounds(77, 71, 161, 16);
+			otherPanel.add(intruderStdDevXSlider);
+			intruderStdDevXSlider.setSnapToTicks(true);
+			intruderStdDevXSlider.setPaintLabels(true);		
+			intruderStdDevXSlider.setMaximum(15);
+			intruderStdDevXSlider.setMinimum(0);
+			intruderStdDevXSlider.setValue((int)(intruderConfig.intruderStdDevX));
+			intruderStdDevXSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					intruderConfig.intruderStdDevX = source.getValue();
@@ -469,18 +449,18 @@ public class IntruderConfigurator extends JDialog
 			otherPanel.add(lblStdDevY);
 			
 			final JLabel stdDevYLabel = new JLabel(""+intruderConfig.intruderStdDevY);
-			stdDevYLabel.setBounds(232, 91, 58, 15);
+			stdDevYLabel.setBounds(242, 91, 58, 15);
 			otherPanel.add(stdDevYLabel);
 			
-			JSlider headOnStdDevYSlider = new JSlider();
-			headOnStdDevYSlider.setBounds(64, 91, 161, 16);
-			otherPanel.add(headOnStdDevYSlider);
-			headOnStdDevYSlider.setSnapToTicks(true);
-			headOnStdDevYSlider.setPaintLabels(true);		
-			headOnStdDevYSlider.setMaximum(15);
-			headOnStdDevYSlider.setMinimum(0);
-			headOnStdDevYSlider.setValue((int)(intruderConfig.intruderStdDevY));
-			headOnStdDevYSlider.addChangeListener(new ChangeListener() {
+			JSlider intruderStdDevYSlider = new JSlider();
+			intruderStdDevYSlider.setBounds(77, 91, 161, 16);
+			otherPanel.add(intruderStdDevYSlider);
+			intruderStdDevYSlider.setSnapToTicks(true);
+			intruderStdDevYSlider.setPaintLabels(true);		
+			intruderStdDevYSlider.setMaximum(15);
+			intruderStdDevYSlider.setMinimum(0);
+			intruderStdDevYSlider.setValue((int)(intruderConfig.intruderStdDevY));
+			intruderStdDevYSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					intruderConfig.intruderStdDevY = source.getValue();
@@ -494,24 +474,25 @@ public class IntruderConfigurator extends JDialog
 			otherPanel.add(lblStdDevZ);
 			
 			final JLabel stdDevZLabel = new JLabel(""+intruderConfig.intruderStdDevZ);
-			stdDevZLabel.setBounds(232, 111, 58, 15);
+			stdDevZLabel.setBounds(242, 111, 58, 15);
 			otherPanel.add(stdDevZLabel);
 			
-			JSlider headOnStdDevZSlider = new JSlider();
-			headOnStdDevZSlider.setBounds(64, 111, 161, 16);
-			otherPanel.add(headOnStdDevZSlider);
-			headOnStdDevZSlider.setSnapToTicks(true);
-			headOnStdDevZSlider.setPaintLabels(true);		
-			headOnStdDevZSlider.setMaximum(15);
-			headOnStdDevZSlider.setMinimum(0);
-			headOnStdDevZSlider.setValue((int)(intruderConfig.intruderStdDevZ));
-			headOnStdDevZSlider.addChangeListener(new ChangeListener() {
+			JSlider intruderStdDevZSlider = new JSlider();
+			intruderStdDevZSlider.setBounds(77, 111, 161, 16);
+			otherPanel.add(intruderStdDevZSlider);
+			intruderStdDevZSlider.setSnapToTicks(true);
+			intruderStdDevZSlider.setPaintLabels(true);		
+			intruderStdDevZSlider.setMaximum(15);
+			intruderStdDevZSlider.setMinimum(0);
+			intruderStdDevZSlider.setValue((int)(intruderConfig.intruderStdDevZ));
+			intruderStdDevZSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					intruderConfig.intruderStdDevZ = source.getValue();
 					stdDevZLabel.setText(""+intruderConfig.intruderStdDevZ);
 				}
 			});
+			
 		}
 		
 		

@@ -34,7 +34,6 @@ public class ACASX3DDTMC
 	
 	public final static double WHITE_NOISE_SDEV=3.0;
 	private ArrayList<ThreeTuple<Double, Double, Double>> sigmaPoints = new ArrayList<>();
-
 	
 	public ACASX3DDTMC() 
 	{		
@@ -75,8 +74,8 @@ public class ACASX3DDTMC
 		
 		for(ThreeTuple<Double, Double, Double> sigmaPoint : sigmaPoints)
 		{
-			double rAccel_r=sigmaPoint.x1;
-			double rAccel_pr=sigmaPoint.x2;
+			double ra_r=sigmaPoint.x1;
+			double ra_pr=sigmaPoint.x2;
 			double sigmaP=sigmaPoint.x3;
 			
 			double r=ustate.getR();
@@ -84,7 +83,7 @@ public class ACASX3DDTMC
 			double theta=ustate.getTheta();
 						
 			Double2D vel= new Double2D(rv*Math.cos(Math.toRadians(theta)), rv*Math.sin(Math.toRadians(theta)));
-			Double2D velP= new Double2D(Math.max(-UPPER_RV, Math.min(UPPER_RV, vel.x+rAccel_r)), Math.max(-UPPER_RV, Math.min(UPPER_RV, vel.y+rAccel_pr)));
+			Double2D velP= new Double2D(Math.max(-UPPER_RV, Math.min(UPPER_RV, vel.x+ra_r)), Math.max(-UPPER_RV, Math.min(UPPER_RV, vel.y+ra_pr)));
 			if(velP.length()>UPPER_RV)
 			{
 				velP=velP.resize(UPPER_RV);
@@ -154,20 +153,3 @@ public class ACASX3DDTMC
 	}	
 	
 }
-
-class FiveTuple<X1, X2, X3, X4, X5> 
-{ 
-	  public final X1 x1; 
-	  public final X2 x2; 
-	  public final X3 x3; 
-	  public final X4 x4; 
-	  public final X5 x5; 
-	  public FiveTuple(X1 x1, X2 x2, X3 x3, X4 x4, X5 x5) 
-	  { 
-	    this.x1 = x1; 
-	    this.x2 = x2;
-	    this.x3 = x3;
-	    this.x4 = x4;
-	    this.x5 = x5;
-	  } 
-} 

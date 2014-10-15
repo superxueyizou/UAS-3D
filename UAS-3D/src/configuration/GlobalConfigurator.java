@@ -38,9 +38,6 @@ public class GlobalConfigurator extends JPanel
 	private JButton btnLoad;
 	private JTextField alertTimeTextField;
 
-	/**
-	 * @wbp.parser.constructor
-	 */
 	public GlobalConfigurator(SimState simState, GUIState guiState) 
 	{
 		this.state=simState;

@@ -13,10 +13,10 @@ public class CrossingModel
 		int scale=numHeadOn/2;
 			
 		IntruderConfig crossingConfig = new IntruderConfig();
-		crossingConfig.intruderVx=-crossingConfig.intruderVx;	
-		crossingConfig.intruderOffsetX = config.globalConfig.alertTime*(config.ownshipConfig.ownshipVx-crossingConfig.intruderVx);
+		crossingConfig.intruderGs=-crossingConfig.intruderGs;	
+//		crossingConfig.intruderOffsetX = config.globalConfig.alertTime*(config.ownshipConfig.ownshipVx-crossingConfig.intruderGs);
 		crossingConfig.intruderOffsetY = sign*scale*200;
-		crossingConfig.intruderOffsetZ = 2*(SAAModel.getExistingInstance().random.nextDouble()-0.5)*5000;
+//		crossingConfig.intruderOffsetZ = 2*(SAAModel.getExistingInstance().random.nextDouble()-0.5)*5000;
 		return crossingConfig;
 	}
 

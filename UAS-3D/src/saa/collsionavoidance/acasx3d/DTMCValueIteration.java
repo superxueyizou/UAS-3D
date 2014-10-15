@@ -47,11 +47,8 @@ public class DTMCValueIteration
 			for (int i=0; i<numUStates;i++)
 			{
 				ACASX3DUState s=ustates[i];
-				if(s.getOrder()!=i)
-				{
-					System.err.println("error happens in DTMCValueIteration() + s.getOrder()!=i");
-				}
-				
+				assert (s.getOrder()==i);
+			
 				double prob=0;	
 				if(s.getR()>COLLISION_R)
 				{
@@ -74,17 +71,16 @@ public class DTMCValueIteration
 	
 	public void storeValues() 
 	{	
-		FileWriter entryTimeDistributionFileWriter = null;
-	
+		FileWriter entryTimeDistributionFileWriter = null;	
 		try 
         {
             entryTimeDistributionFileWriter = new FileWriter("src/saa/collsionavoidance/acasx3d/generatedFiles/entryTimeDistributionFile",false);
 
             for(int k=0; k<=T;k++ )
             {
-            	for (int i=0; i<numUStates;i++)
+            	for (int su=0; su<numUStates;su++)
     			{
-            		entryTimeDistributionFileWriter.write(U[k][i]+"\n"); 
+            		entryTimeDistributionFileWriter.write(U[k][su]+"\n"); 
     			}
             }  
    		

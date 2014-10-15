@@ -1,33 +1,29 @@
 package configuration;
 
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import javax.swing.ButtonGroup;
-import javax.swing.JRadioButton;
-import java.awt.LayoutManager;
-import java.awt.event.ActionListener;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import javax.swing.JCheckBox;
-import java.awt.Color;
-
 public class OwnshipConfigurator extends JPanel
 {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	public static Configuration config= Configuration.getInstance();
-	private final ButtonGroup selfAutoPilotAlgorithmGroup = new ButtonGroup();
-	private final ButtonGroup selfCollisionAvoidanceAlgorithmGroup = new ButtonGroup();
-	private final ButtonGroup selfSelfSeparationAlgorithmGroup = new ButtonGroup();
+	private final ButtonGroup ownshipAutoPilotAlgorithmGroup = new ButtonGroup();
+	private final ButtonGroup ownshipCollisionAvoidanceAlgorithmGroup = new ButtonGroup();
+	private final ButtonGroup ownshipSelfSeparationAlgorithmGroup = new ButtonGroup();
 
 	public OwnshipConfigurator() 
 	{	
@@ -133,7 +129,7 @@ public class OwnshipConfigurator extends JPanel
 				}
 			});
 			rdbtnWhitenoise.setBounds(6, 19, 110, 23);
-			selfAutoPilotAlgorithmGroup.add(rdbtnWhitenoise);
+			ownshipAutoPilotAlgorithmGroup.add(rdbtnWhitenoise);
 			autoPilotAlgorithmSelectionPanel.add(rdbtnWhitenoise);
 			
 			
@@ -148,7 +144,7 @@ public class OwnshipConfigurator extends JPanel
 				}
 			});			
 			rdbtnSpecific.setBounds(203, 19, 77, 23);
-			selfAutoPilotAlgorithmGroup.add(rdbtnSpecific);
+			ownshipAutoPilotAlgorithmGroup.add(rdbtnSpecific);
 			autoPilotAlgorithmSelectionPanel.add(rdbtnSpecific);
 			
 
@@ -164,16 +160,16 @@ public class OwnshipConfigurator extends JPanel
 			this.add(collisionAvoidanceAlgorithmSelectionPanel);
 			collisionAvoidanceAlgorithmSelectionPanel.setLayout(null);			
 			
-			JRadioButton rdbtnACASXAvoidanceAlgorithm = new JRadioButton("ACASX");
-			rdbtnACASXAvoidanceAlgorithm.setBounds(6, 17, 94, 23);
-			rdbtnACASXAvoidanceAlgorithm.setSelected(config.ownshipConfig.ownshipCollisionAvoidanceAlgorithmSelection == "ACASXAvoidanceAlgorithm");
-			collisionAvoidanceAlgorithmSelectionPanel.add(rdbtnACASXAvoidanceAlgorithm);
-			selfCollisionAvoidanceAlgorithmGroup.add(rdbtnACASXAvoidanceAlgorithm);
-			rdbtnACASXAvoidanceAlgorithm.addActionListener(new ActionListener() {
+			JRadioButton rdbtnACASX2DAvoidanceAlgorithm = new JRadioButton("ACASX2D");
+			rdbtnACASX2DAvoidanceAlgorithm.setBounds(6, 17, 94, 23);
+			rdbtnACASX2DAvoidanceAlgorithm.setSelected(config.ownshipConfig.ownshipCollisionAvoidanceAlgorithmSelection == "ACASX2DAvoidanceAlgorithm");
+			collisionAvoidanceAlgorithmSelectionPanel.add(rdbtnACASX2DAvoidanceAlgorithm);
+			ownshipCollisionAvoidanceAlgorithmGroup.add(rdbtnACASX2DAvoidanceAlgorithm);
+			rdbtnACASX2DAvoidanceAlgorithm.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(((JRadioButton)e.getSource()).isSelected())
 					{
-						config.ownshipConfig.ownshipCollisionAvoidanceAlgorithmSelection = "ACASXAvoidanceAlgorithm";
+						config.ownshipConfig.ownshipCollisionAvoidanceAlgorithmSelection = "ACASX2DAvoidanceAlgorithm";
 					}
 				}
 			});
@@ -182,7 +178,7 @@ public class OwnshipConfigurator extends JPanel
 			rdbtnACASX3DAvoidanceAlgorithm.setBounds(102, 17, 87, 23);
 			rdbtnACASX3DAvoidanceAlgorithm.setSelected(config.ownshipConfig.ownshipCollisionAvoidanceAlgorithmSelection == "ACASX3DAvoidanceAlgorithm");
 			collisionAvoidanceAlgorithmSelectionPanel.add(rdbtnACASX3DAvoidanceAlgorithm);
-			selfCollisionAvoidanceAlgorithmGroup.add(rdbtnACASX3DAvoidanceAlgorithm);
+			ownshipCollisionAvoidanceAlgorithmGroup.add(rdbtnACASX3DAvoidanceAlgorithm);
 			rdbtnACASX3DAvoidanceAlgorithm.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(((JRadioButton)e.getSource()).isSelected())
@@ -196,7 +192,7 @@ public class OwnshipConfigurator extends JPanel
 			rdbtnNone.setBounds(206, 17, 62, 23);
 			rdbtnNone.setSelected(config.ownshipConfig.ownshipCollisionAvoidanceAlgorithmSelection == "None");
 			collisionAvoidanceAlgorithmSelectionPanel.add(rdbtnNone);
-			selfCollisionAvoidanceAlgorithmGroup.add(rdbtnNone);
+			ownshipCollisionAvoidanceAlgorithmGroup.add(rdbtnNone);
 			rdbtnNone.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(((JRadioButton)e.getSource()).isSelected())
@@ -214,47 +210,23 @@ public class OwnshipConfigurator extends JPanel
 			add(otherPanel);
 			otherPanel.setLayout(null);
 			
-			JLabel lblVx = new JLabel("VX");
-			lblVx.setBounds(10, 11, 37, 15);
-			otherPanel.add(lblVx);
-			
-			final JLabel vxLabel = new JLabel(""+config.ownshipConfig.ownshipVx);
-			vxLabel.setBounds(223, 11, 58, 15);
-			otherPanel.add(vxLabel);
-			
-			JSlider selfVxSlider = new JSlider();
-			selfVxSlider.setBounds(55, 11, 161, 16);
-			otherPanel.add(selfVxSlider);
-			selfVxSlider.setSnapToTicks(true);
-			selfVxSlider.setPaintLabels(true);		
-			selfVxSlider.setMaximum(304);
-			selfVxSlider.setMinimum(169);
-			selfVxSlider.setValue((int)(config.ownshipConfig.ownshipVx));
-			selfVxSlider.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					JSlider source = (JSlider) e.getSource();
-					config.ownshipConfig.ownshipVx = source.getValue();
-					vxLabel.setText(""+config.ownshipConfig.ownshipVx);
-				}
-			});
-			
 			JLabel lblVy = new JLabel("VY");
-			lblVy.setBounds(10, 31, 37, 15);
+			lblVy.setBounds(10, 11, 37, 15);
 			otherPanel.add(lblVy);
-			
+				
 			final JLabel vyLabel = new JLabel(""+config.ownshipConfig.ownshipVy);
-			vyLabel.setBounds(223, 31, 58, 15);
+			vyLabel.setBounds(226, 11, 58, 15);
 			otherPanel.add(vyLabel);
 		
-			JSlider selfVySlider = new JSlider();
-			selfVySlider.setBounds(55, 31, 161, 16);
-			otherPanel.add(selfVySlider);
-			selfVySlider.setSnapToTicks(true);
-			selfVySlider.setPaintLabels(true);		
-			selfVySlider.setMaximum(58);
-			selfVySlider.setMinimum(-67);
-			selfVySlider.setValue((int)(config.ownshipConfig.ownshipVy));
-			selfVySlider.addChangeListener(new ChangeListener() {
+			JSlider ownshipVySlider = new JSlider();
+			ownshipVySlider.setBounds(57, 11, 161, 16);
+			otherPanel.add(ownshipVySlider);
+			ownshipVySlider.setSnapToTicks(true);
+			ownshipVySlider.setPaintLabels(true);		
+			ownshipVySlider.setMaximum(58);
+			ownshipVySlider.setMinimum(-67);
+			ownshipVySlider.setValue((int)(config.ownshipConfig.ownshipVy));
+			ownshipVySlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					config.ownshipConfig.ownshipVy = source.getValue();
@@ -263,27 +235,51 @@ public class OwnshipConfigurator extends JPanel
 				}
 			});
 			
-			JLabel lblVz = new JLabel("VZ");
-			lblVz.setBounds(10, 51, 37, 15);
-			otherPanel.add(lblVz);
+			JLabel lblGs = new JLabel("GS");
+			lblGs.setBounds(10, 32, 37, 15);
+			otherPanel.add(lblGs);
 			
-			final JLabel vzLabel = new JLabel(""+config.ownshipConfig.ownshipVz);
-			vzLabel.setBounds(223, 51, 58, 15);
-			otherPanel.add(vzLabel);
-		
-			JSlider selfVzSlider = new JSlider();
-			selfVzSlider.setBounds(55, 51, 161, 16);
-			otherPanel.add(selfVzSlider);
-			selfVzSlider.setSnapToTicks(true);
-			selfVzSlider.setPaintLabels(true);		
-			selfVzSlider.setMaximum(58);
-			selfVzSlider.setMinimum(-67);
-			selfVzSlider.setValue((int)(config.ownshipConfig.ownshipVz));
-			selfVzSlider.addChangeListener(new ChangeListener() {
+			final JLabel gsLabel = new JLabel(""+config.ownshipConfig.ownshipGs);
+			gsLabel.setBounds(226, 32, 58, 15);
+			otherPanel.add(gsLabel);
+			
+			JSlider ownshipGsSlider = new JSlider();
+			ownshipGsSlider.setBounds(57, 32, 161, 16);
+			otherPanel.add(ownshipGsSlider);
+			ownshipGsSlider.setSnapToTicks(true);
+			ownshipGsSlider.setPaintLabels(true);		
+			ownshipGsSlider.setMaximum(304);
+			ownshipGsSlider.setMinimum(169);
+			ownshipGsSlider.setValue((int)(config.ownshipConfig.ownshipGs));
+			ownshipGsSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
-					config.ownshipConfig.ownshipVz = source.getValue();
-					vzLabel.setText(""+config.ownshipConfig.ownshipVz);
+					config.ownshipConfig.ownshipGs = source.getValue();
+					gsLabel.setText(""+config.ownshipConfig.ownshipGs);
+				}
+			});
+			
+			JLabel lblBearing = new JLabel("Bearing");
+			lblBearing.setBounds(10, 51, 45, 15);
+			otherPanel.add(lblBearing);
+			
+			final JLabel bearingLabel = new JLabel(""+config.ownshipConfig.ownshipBearing);
+			bearingLabel.setBounds(226, 51, 58, 15);
+			otherPanel.add(bearingLabel);
+		
+			JSlider ownshipBearingSlider = new JSlider();
+			ownshipBearingSlider.setBounds(57, 51, 161, 16);
+			otherPanel.add(ownshipBearingSlider);
+			ownshipBearingSlider.setSnapToTicks(true);
+			ownshipBearingSlider.setPaintLabels(true);		
+			ownshipBearingSlider.setMaximum(180);
+			ownshipBearingSlider.setMinimum(-180);
+			ownshipBearingSlider.setValue((int)(config.ownshipConfig.ownshipBearing));
+			ownshipBearingSlider.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					JSlider source = (JSlider) e.getSource();
+					config.ownshipConfig.ownshipBearing = source.getValue();
+					bearingLabel.setText(""+config.ownshipConfig.ownshipBearing);
 
 				}
 			});
@@ -293,18 +289,18 @@ public class OwnshipConfigurator extends JPanel
 			otherPanel.add(lblStdDevX);
 			
 			final JLabel stdDevXLabel = new JLabel(""+config.ownshipConfig.ownshipStdDevX);
-			stdDevXLabel.setBounds(223, 71, 58, 15);
+			stdDevXLabel.setBounds(226, 71, 58, 15);
 			otherPanel.add(stdDevXLabel);
 			
-			JSlider selfStdDevXSlider = new JSlider();
-			selfStdDevXSlider.setBounds(55, 71, 161, 16);
-			otherPanel.add(selfStdDevXSlider);
-			selfStdDevXSlider.setSnapToTicks(true);
-			selfStdDevXSlider.setPaintLabels(true);		
-			selfStdDevXSlider.setMaximum(15);
-			selfStdDevXSlider.setMinimum(0);
-			selfStdDevXSlider.setValue((int)(config.ownshipConfig.ownshipStdDevX));
-			selfStdDevXSlider.addChangeListener(new ChangeListener() {
+			JSlider ownshipStdDevXSlider = new JSlider();
+			ownshipStdDevXSlider.setBounds(57, 71, 161, 16);
+			otherPanel.add(ownshipStdDevXSlider);
+			ownshipStdDevXSlider.setSnapToTicks(true);
+			ownshipStdDevXSlider.setPaintLabels(true);		
+			ownshipStdDevXSlider.setMaximum(15);
+			ownshipStdDevXSlider.setMinimum(0);
+			ownshipStdDevXSlider.setValue((int)(config.ownshipConfig.ownshipStdDevX));
+			ownshipStdDevXSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					config.ownshipConfig.ownshipStdDevX = source.getValue();
@@ -317,18 +313,18 @@ public class OwnshipConfigurator extends JPanel
 			otherPanel.add(lblStdDevY);
 			
 			final JLabel stdDevYLabel = new JLabel(""+config.ownshipConfig.ownshipStdDevY);
-			stdDevYLabel.setBounds(223, 91, 58, 15);
+			stdDevYLabel.setBounds(226, 91, 58, 15);
 			otherPanel.add(stdDevYLabel);
 			
-			JSlider selfStdDevYSlider = new JSlider();
-			selfStdDevYSlider.setBounds(55, 91, 161, 16);
-			otherPanel.add(selfStdDevYSlider);
-			selfStdDevYSlider.setSnapToTicks(true);
-			selfStdDevYSlider.setPaintLabels(true);		
-			selfStdDevYSlider.setMaximum(15);
-			selfStdDevYSlider.setMinimum(0);
-			selfStdDevYSlider.setValue((int)(config.ownshipConfig.ownshipStdDevY));
-			selfStdDevYSlider.addChangeListener(new ChangeListener() {
+			JSlider ownshipStdDevYSlider = new JSlider();
+			ownshipStdDevYSlider.setBounds(57, 91, 161, 16);
+			otherPanel.add(ownshipStdDevYSlider);
+			ownshipStdDevYSlider.setSnapToTicks(true);
+			ownshipStdDevYSlider.setPaintLabels(true);		
+			ownshipStdDevYSlider.setMaximum(15);
+			ownshipStdDevYSlider.setMinimum(0);
+			ownshipStdDevYSlider.setValue((int)(config.ownshipConfig.ownshipStdDevY));
+			ownshipStdDevYSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					config.ownshipConfig.ownshipStdDevY = source.getValue();
@@ -342,18 +338,18 @@ public class OwnshipConfigurator extends JPanel
 			otherPanel.add(lblStdDevZ);
 			
 			final JLabel stdDevZLabel = new JLabel(""+config.ownshipConfig.ownshipStdDevZ);
-			stdDevZLabel.setBounds(223, 111, 58, 15);
+			stdDevZLabel.setBounds(226, 111, 58, 15);
 			otherPanel.add(stdDevZLabel);
 			
-			JSlider selfStdDevZSlider = new JSlider();
-			selfStdDevZSlider.setBounds(55, 111, 161, 16);
-			otherPanel.add(selfStdDevZSlider);
-			selfStdDevZSlider.setSnapToTicks(true);
-			selfStdDevZSlider.setPaintLabels(true);		
-			selfStdDevZSlider.setMaximum(15);
-			selfStdDevZSlider.setMinimum(0);
-			selfStdDevZSlider.setValue((int)(config.ownshipConfig.ownshipStdDevZ));
-			selfStdDevZSlider.addChangeListener(new ChangeListener() {
+			JSlider ownshipStdDevZSlider = new JSlider();
+			ownshipStdDevZSlider.setBounds(57, 111, 161, 16);
+			otherPanel.add(ownshipStdDevZSlider);
+			ownshipStdDevZSlider.setSnapToTicks(true);
+			ownshipStdDevZSlider.setPaintLabels(true);		
+			ownshipStdDevZSlider.setMaximum(15);
+			ownshipStdDevZSlider.setMinimum(0);
+			ownshipStdDevZSlider.setValue((int)(config.ownshipConfig.ownshipStdDevZ));
+			ownshipStdDevZSlider.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					JSlider source = (JSlider) e.getSource();
 					config.ownshipConfig.ownshipStdDevZ = source.getValue();
@@ -374,7 +370,7 @@ public class OwnshipConfigurator extends JPanel
 			rdbtnNASAChorusAlgorithm.setBounds(6, 17, 94, 23);
 			rdbtnNASAChorusAlgorithm.setSelected(config.ownshipConfig.ownshipSelfSeparationAlgorithmSelection == "NASAChorusAlgorithm");
 			selfSeparationAlgorithmSelectionPanel.add(rdbtnNASAChorusAlgorithm);
-			selfSelfSeparationAlgorithmGroup.add(rdbtnNASAChorusAlgorithm);
+			ownshipSelfSeparationAlgorithmGroup.add(rdbtnNASAChorusAlgorithm);
 			rdbtnNASAChorusAlgorithm.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(((JRadioButton)e.getSource()).isSelected())
@@ -389,7 +385,7 @@ public class OwnshipConfigurator extends JPanel
 			rdbtnNone_1.setBounds(206, 17, 62, 23);
 			rdbtnNone_1.setSelected(config.ownshipConfig.ownshipSelfSeparationAlgorithmSelection == "None");
 			selfSeparationAlgorithmSelectionPanel.add(rdbtnNone_1);
-			selfSelfSeparationAlgorithmGroup.add(rdbtnNone_1);
+			ownshipSelfSeparationAlgorithmGroup.add(rdbtnNone_1);
 			rdbtnNone_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if(((JRadioButton)e.getSource()).isSelected())
@@ -503,18 +499,4 @@ public class OwnshipConfigurator extends JPanel
 					
 	}
 
-	public OwnshipConfigurator(LayoutManager layout) {
-		super(layout);
-		// TODO Auto-generated constructor stub
-	}
-
-	public OwnshipConfigurator(boolean isDoubleBuffered) {
-		super(isDoubleBuffered);
-		// TODO Auto-generated constructor stub
-	}
-
-	public OwnshipConfigurator(LayoutManager layout, boolean isDoubleBuffered) {
-		super(layout, isDoubleBuffered);
-		// TODO Auto-generated constructor stub
-	}
 }

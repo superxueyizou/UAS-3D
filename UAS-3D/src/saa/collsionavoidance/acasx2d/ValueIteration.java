@@ -1,4 +1,4 @@
-package saa.collsionavoidance.mdpLite;
+package saa.collsionavoidance.acasx2d;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -127,9 +127,9 @@ public class ValueIteration
 	
 		try 
         {
-            indexFileWriter = new FileWriter("src/saa/collsionavoidance/mdpLite/generatedFiles/indexFile",false);
-            costFileWriter = new FileWriter("src/saa/collsionavoidance/mdpLite/generatedFiles/costFile",false);
-            actionFileWriter = new FileWriter("src/saa/collsionavoidance/mdpLite/generatedFiles/actionFile",false);
+            indexFileWriter = new FileWriter("src/saa/collsionavoidance/acasx2d/generatedFiles/indexFile",false);
+            costFileWriter = new FileWriter("src/saa/collsionavoidance/acasx2d/generatedFiles/costFile",false);
+            actionFileWriter = new FileWriter("src/saa/collsionavoidance/acasx2d/generatedFiles/actionFile",false);
       
             int index=0;            
 			for (int i=0; i<numStates;i++)

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package saa.collsionavoidance.mdpLite;
+package saa.collsionavoidance.acasx2d;
 
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;

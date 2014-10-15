@@ -9,7 +9,7 @@ import modeling.uas.UAS;
 import modeling.uas.UASPerformance;
 import modeling.uas.UASVelocity;
 import saa.AutoPilot;
-import saa.collsionavoidance.ACASX;
+import saa.collsionavoidance.ACASX2D;
 import saa.collsionavoidance.ACASX3D;
 import saa.collsionavoidance.CollisionAvoidanceAlgorithm;
 import saa.collsionavoidance.CollisionAvoidanceAlgorithmAdapter;
@@ -52,7 +52,7 @@ public class OwnshipGenerator
 	public UAS execute()
 	{
 		Double3D location = new Double3D(uasX,uasY,uasZ);
-		UASVelocity uasVelocity = new UASVelocity(new Double3D(ownshipConfig.ownshipVx,ownshipConfig.ownshipVy,ownshipConfig.ownshipVz));
+		UASVelocity uasVelocity = new UASVelocity(new Double3D(ownshipConfig.ownshipGs*Math.cos(Math.toRadians(ownshipConfig.ownshipBearing)),ownshipConfig.ownshipVy,ownshipConfig.ownshipGs*Math.sin(Math.toRadians(ownshipConfig.ownshipBearing))));
 		UASPerformance uasPerformance = new UASPerformance(ownshipConfig.ownshipStdDevX, ownshipConfig.ownshipStdDevY,ownshipConfig.ownshipStdDevZ,
 				ownshipConfig.ownshipMaxSpeed, ownshipConfig.ownshipMinSpeed, ownshipConfig.ownshipMaxClimb, 
 				ownshipConfig.ownshipMaxDescent,ownshipConfig.ownshipMaxTurning, ownshipConfig.ownshipMaxAcceleration, ownshipConfig.ownshipMaxDeceleration);
@@ -89,8 +89,8 @@ public class OwnshipGenerator
 		CollisionAvoidanceAlgorithm caa;
 		switch(ownshipConfig.ownshipCollisionAvoidanceAlgorithmSelection)
 		{
-			case "ACASXAvoidanceAlgorithm":
-				caa= new ACASX(state, ownship);
+			case "ACASX2DAvoidanceAlgorithm":
+				caa= new ACASX2D(state, ownship);
 				break;
 			case "ACASX3DAvoidanceAlgorithm":
 				caa= new ACASX3D(state, ownship);

@@ -26,22 +26,13 @@ public class ACASX3DUState//uncontrolled state
 		return r;
 	}
 
-
-
-
 	public double getRv() {
 		return rv;
 	}
 
-
-
-
 	public double getTheta() {
 		return theta;
 	}
-
-
-
 
 	public boolean equals(Object obj)
 	{

@@ -8,7 +8,7 @@ public class GlobalConfig
 	
 	public int alertTime=20;
 
-	public boolean collisionAvoidanceEnabler=false;
+	public boolean collisionAvoidanceEnabler=true;
 	public boolean selfSeparationEnabler=false;
 	public boolean accidentDetectorEnabler=true;
 	public boolean sensorNoiseEnabler=true;

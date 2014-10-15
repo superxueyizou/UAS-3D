@@ -85,7 +85,7 @@ public class ACASX3DMDP
 	 */
 	public ArrayList<Integer> actions(ACASX3DCState cstate)
 	{
-		ArrayList<Integer> actions= new ArrayList<Integer>();
+		ArrayList<Integer> actions= new ArrayList<Integer>();			
 
 		if(cstate.getH()==UPPER_H || cstate.getoVy()== UPPER_VY)
 		{
@@ -159,27 +159,9 @@ public class ACASX3DMDP
 		return null;
 	}
 	
-	/**
-	 * Get the set of actions for the @code stateOrder th state s.
-	 * 
-	 * @param cstateOrder int.
-	 * @return the set of actions for stateOrder th state.
-	 */
-	public ArrayList<Integer> actions(int cstateOrder)
-	{
-		ACASX3DCState s=cStates[cstateOrder];
-		return actions(s);
-	}
-
-	
 	public Map<ACASX3DCState,Double> getTransitionStatesAndProbs(ACASX3DCState cstate, int actionCode)
 	{
 		Map<ACASX3DCState, Double> TransitionStatesAndProbs = new LinkedHashMap<ACASX3DCState,Double>();
-		if(actionCode==-1)//leaving state
-		{ 
-			TransitionStatesAndProbs.put(cstate, 1.0);		
-			return TransitionStatesAndProbs;
-		}
 
 		double targetV=ACASX3DUtils.getActionV(actionCode);
 		double accel=ACASX3DUtils.getActionA(actionCode);
@@ -283,117 +265,7 @@ public class ACASX3DMDP
 		return TransitionStatesAndProbs;
 	}
 	
-	
-	public Map<Integer,Double> getTransitionStatesAndProbs(int cstateOrder, int actionCode)
-	{
-		ACASX3DCState state = cStates[cstateOrder];
-		Map<Integer, Double> TransitionStatesAndProbs = new LinkedHashMap<Integer,Double>();
-	
-		double targetV=ACASX3DUtils.getActionV(actionCode);
-		double accel=ACASX3DUtils.getActionA(actionCode);
-		ArrayList<AbstractMap.SimpleEntry<Integer, Double>> nextStateMapProbabilities = new ArrayList<>();
 		
-		if( (accel>0 && targetV>state.getoVy() && state.getoVy()<UPPER_VY)
-				|| (accel<0 && targetV<state.getoVy() && state.getoVy()>-UPPER_VY))
-		{// own aircraft follows a RA other than COC			
-			
-			for(ThreeTuple<Double, Double, Double> sigmaPoint : sigmaPointsA)
-			{
-				double oAy=accel;
-				double iAy=sigmaPoint.x2;
-				double sigmaP=sigmaPoint.x3;
-				
-				double hP= state.getH()+ (state.getiVy()-state.getoVy()) + 0.5*(iAy-oAy);
-				double oVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getoVy()+oAy));
-				double iVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getiVy()+iAy));
-				int raP=actionCode;
-				
-				int hIdxL = (int)Math.floor(hP/hRes);
-				int oVyIdxL = (int)Math.floor(oVyP/oVRes);
-				int iVyIdxL = (int)Math.floor(iVyP/iVRes);
-				for(int i=0;i<=1;i++)
-				{
-					int hIdx = (i==0? hIdxL : hIdxL+1);
-					int hIdxP= hIdx< -nh? -nh: (hIdx>nh? nh : hIdx);			
-					for(int j=0;j<=1;j++)
-					{
-						int oVyIdx = (j==0? oVyIdxL : oVyIdxL+1);
-						int oVyIdxP= oVyIdx<-noVy? -noVy: (oVyIdx>noVy? noVy : oVyIdx);
-						for(int k=0;k<=1;k++)
-						{
-							int iVyIdx = (k==0? iVyIdxL : iVyIdxL+1);
-							int iVyIdxP= iVyIdx<-niVy? -niVy: (iVyIdx>niVy? niVy : iVyIdx);
-							
-							ACASX3DCState nextState= new ACASX3DCState(hIdxP, oVyIdxP, iVyIdxP, raP);
-							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVyIdx-oVyP/oVRes))*(1-Math.abs(iVyIdx-iVyP/iVRes));
-							nextStateMapProbabilities.add(new SimpleEntry<Integer, Double>(nextState.getOrder(),probability) );
-						}
-					}
-				}
-
-			}			
-			
-		}
-		else
-		{				
-			for(ThreeTuple<Double, Double, Double> sigmaPoint : sigmaPointsB)
-			{
-				double oAy=sigmaPoint.x1;
-				double iAy=sigmaPoint.x2;
-				double sigmaP=sigmaPoint.x3;
-				
-				double hP= state.getH()+ (state.getiVy()-state.getoVy()) + 0.5*(iAy-oAy);
-				double oVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getoVy()+oAy));
-				double iVyP= Math.max(-UPPER_VY, Math.min(UPPER_VY, state.getiVy()+iAy));
-				int raP=actionCode;
-
-				int hIdxL = (int)Math.floor(hP/hRes);
-				int oVyIdxL = (int)Math.floor(oVyP/oVRes);
-				int iVyIdxL = (int)Math.floor(iVyP/iVRes);
-				for(int i=0;i<=1;i++)
-				{
-					int hIdx = (i==0? hIdxL : hIdxL+1);
-					int hIdxP= hIdx< -nh? -nh: (hIdx>nh? nh : hIdx);			
-					for(int j=0;j<=1;j++)
-					{
-						int oVyIdx = (j==0? oVyIdxL : oVyIdxL+1);
-						int oVyIdxP= oVyIdx<-noVy? -noVy: (oVyIdx>noVy? noVy : oVyIdx);
-						for(int k=0;k<=1;k++)
-						{
-							int iVyIdx = (k==0? iVyIdxL : iVyIdxL+1);
-							int iVyIdxP= iVyIdx<-niVy? -niVy: (iVyIdx>niVy? niVy : iVyIdx);
-							
-							ACASX3DCState nextState= new ACASX3DCState(hIdxP, oVyIdxP, iVyIdxP, raP);
-							double probability= sigmaP*(1-Math.abs(hIdx-hP/hRes))*(1-Math.abs(oVyIdx-oVyP/oVRes))*(1-Math.abs(iVyIdx-iVyP/iVRes));
-							nextStateMapProbabilities.add(new SimpleEntry<Integer, Double>(nextState.getOrder(),probability) );
-						}
-					}
-				}	
-				
-			}			
-			
-		}
-
-		for(AbstractMap.SimpleEntry<Integer, Double> nextStateMapProb :nextStateMapProbabilities)
-		{	
-			Integer nextStateOrder = nextStateMapProb.getKey();
-			if(TransitionStatesAndProbs.containsKey(nextStateOrder))
-			{
-				TransitionStatesAndProbs.put(nextStateOrder, TransitionStatesAndProbs.get(nextStateOrder)+nextStateMapProb.getValue());
-			}
-			else
-			{
-				TransitionStatesAndProbs.put(nextStateOrder, nextStateMapProb.getValue());
-			}		
-			
-		}
-		
-		return TransitionStatesAndProbs;
-	}
-	
-
-	
-	
 	public double reward(ACASX3DCState cstate,int actionCode)
 	{
 		if(actionCode==-1)//terminate 
@@ -451,12 +323,7 @@ public class ACASX3DMDP
 		
 		return 0;
 	}
-	
-	public double reward(int cstateOrder,int actionCode)
-	{
-		ACASX3DCState s=cStates[cstateOrder];
-		return reward(s,actionCode);		
-	}
+
 }
 
 class ThreeTuple<X1, X2, X3> 

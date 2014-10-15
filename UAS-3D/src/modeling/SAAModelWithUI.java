@@ -2,24 +2,24 @@ package modeling;
 
 import java.awt.Color;
 import java.io.FileNotFoundException;
+
 import javax.media.j3d.Appearance;
 import javax.media.j3d.ColoringAttributes;
 import javax.swing.JFrame;
 import javax.vecmath.Color3f;
-import configuration.Configuration;
+
 import modeling.env.Waypoint;
 import modeling.uas.UAS;
 import sim.display.Controller;
-import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.display3d.Display3D;
 import sim.engine.SimState;
 import sim.portrayal.Inspector;
-import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal3d.continuous.ContinuousPortrayal3D;
 import sim.portrayal3d.simple.BranchGroupPortrayal3D;
 import sim.portrayal3d.simple.SpherePortrayal3D;
 import sim.portrayal3d.simple.WireFrameBoxPortrayal3D;
+import configuration.Configuration;
 
 /**
  * A class for running a simulation with a UI, run to see a simulation with a UI
@@ -33,10 +33,6 @@ public class SAAModelWithUI extends GUIState
 	
 	private int displayFrameX;
 	private int displayFrameY;	
-	
-    public Display2D display;
-    public JFrame displayFrame;
-    ContinuousPortrayal2D xzViewPortrayal = new ContinuousPortrayal2D();
 	
 	public Display3D display3D;
 	public JFrame display3DFrame;	
@@ -68,19 +64,6 @@ public class SAAModelWithUI extends GUIState
 		//adding the different layers to the display3D
         display3D.attach(environment3DPortrayal, "Environment3D" );
         display3D.attach(wireFrameP, "WireFrame");
-        
-        // make the 2D displayers
-        display = new Display2D(config.globalConfig.worldX,config.globalConfig.worldZ,this);
-        // turn off clipping
-        display.setClipping(false);
-        display.setBackdrop(Color.black);
-        display.setScale(0.02925714285714286);
-        displayFrame = display.createFrame();
-        displayFrame.setTitle("X-Z View");
-        c.registerFrame(displayFrame);   // register the frame so it appears in the "Display" list
-        displayFrame.setVisible(false);            
-        displayFrame.setBounds(0, 0, displayFrameX/2,displayFrameY/2);
-        display.attach( xzViewPortrayal, "xzView" );
 
         javax.media.j3d.BranchGroup bg=null;
 		try {
@@ -211,10 +194,6 @@ public class SAAModelWithUI extends GUIState
     public void quit()
     {
         super.quit();      
-        
-        if (displayFrame!=null) displayFrame.dispose();
-        displayFrame = null;
-        display = null;
         
         if (display3DFrame!=null) display3DFrame.dispose();
         display3DFrame = null;

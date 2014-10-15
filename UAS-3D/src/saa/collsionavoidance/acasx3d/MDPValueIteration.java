@@ -132,10 +132,10 @@ public class MDPValueIteration
             actionFileWriter = new FileWriter("src/saa/collsionavoidance/acasx3d/generatedFiles/actionFile",false);
       
             int index=0;
-            for (int i=0; i<numCStates;i++)//k=0
+            for (int i=0; i<numCStates;i++)//T=k=0
 			{		
 				indexFileWriter.write(index+"\n");    			 	
-				actionFileWriter.write(-1+"\n");  
+				actionFileWriter.write(0+"\n");  //leaving states, using O to avoid arrayIndexOutofRange problem
 				index++;   
 				costFileWriter.write(U[0][i]+"\n");
 			}
