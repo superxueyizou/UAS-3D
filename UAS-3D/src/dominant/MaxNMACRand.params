@@ -3,13 +3,13 @@
 # See the file "LICENSE" for more information
 
 parent.0		= D:/MyLibrary/EclipseWorkspace/ECJ/src/ec/simple/simple.params
-stat.file = $MaxNMACStatics.stat
+stat.file = $MaxNMACRandStatics.stat
 stat.num-children = 1
 stat.child.0 = dominant.MyStatistics
-stat.child.0.file = $MaxNMACStatics2.stat
+stat.child.0.file = $MaxNMACRandStatics2.stat
 
-pop.subpop.0.size = 5000
-generations = 10
+pop.subpop.0.size = 50000
+generations = 1
 
 pop.subpop.0.species		= ec.vector.FloatVectorSpecies
 pop.subpop.0.species.ind	= ec.vector.DoubleVectorIndividual
@@ -51,17 +51,13 @@ pop.subpop.0.species.min-gene = -1000
 pop.subpop.0.species.max-gene = 15000
 
 pop.subpop.0.species.crossover-type	= two
-pop.subpop.0.species.crossover-likelihood	= 0.8
+pop.subpop.0.species.crossover-likelihood	= 0.0
 
-pop.subpop.0.species.mutation-prob	= 0.05
+pop.subpop.0.species.mutation-prob	= 0.00
 pop.subpop.0.species.mutation-type= gauss
 pop.subpop.0.species.mutation-stdev= 0.1
 pop.subpop.0.species.mutation-bounded = true
 pop.subpop.0.species.out-of-bounds-retries = 20
-
-#pop.subpop.0.species.mutation-type = polynomial
-#pop.subpop.0.species.mutation-distribution-index=20
-#pop.subpop.0.species.alternative-polynomial-version = true
 
 
 pop.subpop.0.species.pipe = ec.vector.breed.VectorMutationPipeline

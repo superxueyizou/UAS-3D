@@ -40,4 +40,22 @@ public class Configuration
 		intrudersConfig.put(alias,intruderConfig);
 	}
 		
+	public String toString()
+	{
+		StringBuilder str = new StringBuilder();
+    	str.append(ownshipConfig.ownshipVy+" ");
+    	str.append(ownshipConfig.ownshipGs+" ");
+    	str.append(ownshipConfig.ownshipBearing+" ");
+    	for (IntruderConfig intruderConfig: intrudersConfig.values() )
+    	{
+    		str.append(intruderConfig.intruderOffsetY+" ");
+    		str.append(intruderConfig.intruderR+" ");
+    		str.append(intruderConfig.intruderTheta+" ");
+    		str.append(intruderConfig.intruderVy+" ");
+    		str.append(intruderConfig.intruderGs+" ");
+    		str.append(intruderConfig.intruderBearing+" ");
+    		
+    	}
+		return str.toString();
+	}
 }

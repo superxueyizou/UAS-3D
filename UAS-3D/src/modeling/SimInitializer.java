@@ -1,7 +1,11 @@
 package modeling;
 
+import sim.util.Double3D;
 import modeling.encountergenerator.IntruderFactory;
 import modeling.encountergenerator.OwnshipGenerator;
+import modeling.observer.AccidentDetector;
+import modeling.observer.OscillationCalculator;
+import modeling.observer.ProximityMeasurer;
 import modeling.uas.UAS;
 import configuration.Configuration;
 /**
@@ -24,6 +28,17 @@ public class SimInitializer
 			state.uasBag.add(intruder);
 			state.allEntities.add(intruder);
 		}
+		
+	    AccidentDetector aDetector= new AccidentDetector(state.getNewID(), new Double3D());
+	    ProximityMeasurer pMeasurer= new ProximityMeasurer(state.getNewID(), new Double3D());
+	    OscillationCalculator oCalculator= new OscillationCalculator(state.getNewID(), new Double3D());
+	    state.observerBag.add(pMeasurer);
+	    state.observerBag.add(oCalculator);
+	    state.observerBag.add(aDetector);// index is 2
+	    
+	    state.allEntities.add(pMeasurer);
+	    state.allEntities.add(oCalculator);
+	    state.allEntities.add(aDetector);
 	 	
 	    for(Object o : state.uasBag)
 	    {

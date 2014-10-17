@@ -44,7 +44,7 @@ public class SAAModelWithUI extends GUIState
 	
     public SAAModelWithUI(int UIWidth, int UIHight) 
     {   
-        super(SAAModel.getInstance(785945568, config, true)); 	
+        super(new SAAModel(785945568, config, true)); 	
         this.displayFrameX=UIWidth;
         this.displayFrameY=UIHight;
     }
@@ -155,7 +155,6 @@ public class SAAModelWithUI extends GUIState
 		setupPortrayals();	
 		
 	}
-
 
 	public void load(SimState state)
 	{

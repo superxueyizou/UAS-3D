@@ -47,8 +47,8 @@ public class UAS extends Entity
 	
 /*************************************************************************************************/
 	//parameters for recording information about simulation
-	private double tempDistanceToDanger = Double.MAX_VALUE; //records the closest distance to danger in each step
-	private double minDistanceToDanger = Double.MAX_VALUE; //records the closest distance to danger experienced by the uas
+	private Proximity tempProximity = new Proximity(Double.MAX_VALUE,Double.MAX_VALUE); //records the closest distance to danger in each step
+	private Proximity minProximity = new Proximity(Double.MAX_VALUE,Double.MAX_VALUE);//records the closest distance to danger experienced by the uas
 	
 	private double tempOscillation = 0; //records the oscillation in each step: area
 	private double Oscillation = 0; //records the oscillation in a simulation: area
@@ -114,12 +114,7 @@ public class UAS extends Entity
 				System.out.println("approaching the destination (impossible)!");
 			}	
 			
-		}		
-		
-		if(state!=null)
-		{
-			dealWithTermination();
-		}
+		}	
 		
     }
 
@@ -215,20 +210,20 @@ public class UAS extends Entity
 		return achievedWaypoints;
 	}
 
-	public double getTempDistanceToDanger() {
-		return tempDistanceToDanger;
+	public Proximity getTempProximity() {
+		return tempProximity;
 	}
 
-	public void setTempDistanceToDanger(double tempDistanceToDanger) {
-		this.tempDistanceToDanger = tempDistanceToDanger;
+	public void setTempProximity(Proximity tempProximity) {
+		this.tempProximity = tempProximity;
 	}
 
-	public double getMinDistanceToDanger() {
-		return minDistanceToDanger;
+	public Proximity getMinProximity() {
+		return minProximity;
 	}
 
-	public void setMinDistanceToDanger(double distanceToDanger) {
-		this.minDistanceToDanger = distanceToDanger;
+	public void setMinProximity(Proximity minProximity) {
+		this.minProximity = minProximity;
 	}
 	
 	public double getTempOscillation() {
@@ -262,26 +257,5 @@ public class UAS extends Entity
 	public void setApWp(Waypoint apWp) {
 		this.apWp = apWp;
 	}
-
-
-	
-    public void dealWithTermination()
-	{
-    	int noActiveAgents =0;
-    	for(Object o: state.uasBag)
-    	{
-    		if(((UAS)o).isActive)
-    		{
-    			noActiveAgents++;
-    		}
-    		
-    	}
-    	
-		if(noActiveAgents < 1)
-		{
-			state.schedule.clear();
-			state.kill();
-		}
-	 }
 
 }

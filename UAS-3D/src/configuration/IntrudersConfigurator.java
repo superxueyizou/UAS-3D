@@ -27,7 +27,6 @@ public class IntrudersConfigurator extends JPanel
 	private static final long serialVersionUID = 1L;
 	
 	public static Configuration config= Configuration.getInstance();
-	private int counter=0;
 	
 	public IntrudersConfigurator() 
 	{
@@ -44,6 +43,11 @@ public class IntrudersConfigurator extends JPanel
 		add(comboBox);		
 		
 		final DefaultListModel<String> listModel= new DefaultListModel<>();
+		for(String alias:config.intrudersConfig.keySet())
+		{
+			listModel.addElement(alias);
+		}
+		
 		final JList list = new JList(listModel);
 		list.setBorder(new TitledBorder(null, "List of Intruders", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		list.setBackground(Color.ORANGE);
@@ -77,7 +81,7 @@ public class IntrudersConfigurator extends JPanel
 					}
 						
 				}
-				String alias = intruderType+ (++counter);
+				String alias = "intruder"+ (config.intrudersConfig.size()+1)+":"+intruderType;
 				config.intrudersConfig.put(alias,intruderConfig);
 				listModel.addElement(alias);
 				

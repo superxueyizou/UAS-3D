@@ -14,5 +14,6 @@ public class GlobalConfig
 	public boolean sensorNoiseEnabler=true;
 	public boolean sensorValueUncertainty=true;
 	public boolean encounterGeneratorEnabler=true;
+	public boolean whiteNoiseEnabler=true;
 	
 }

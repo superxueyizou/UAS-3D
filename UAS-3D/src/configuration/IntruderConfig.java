@@ -2,7 +2,6 @@ package configuration;
 
 public class IntruderConfig 
 {
-	public String intruderType = "HeadOn";
 	public double intruderOffsetY= 200;
 	public double intruderR= 10000;
 	public double intruderTheta= 0;

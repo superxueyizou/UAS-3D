@@ -3,8 +3,11 @@
  */
 package dominant;
 
+import java.util.Arrays;
+
 import modeling.SAAModel;
 import modeling.SimInitializer;
+import modeling.observer.AccidentDetector;
 import modeling.uas.UAS;
 import configuration.Configuration;
 import configuration.IntruderConfig;
@@ -61,8 +64,9 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
 		intruderConfig1.intruderGs=intruder1Gs;
 		intruderConfig1.intruderBearing=intruder1Bearing;
 		config.intrudersConfig.put("intruder1", intruderConfig1);
-				
-		SAAModel simState= SAAModel.getInstance(785945568, config, false); 	
+		
+		SAAModel simState= new SAAModel(785945568, config, true); 	
+		simState.reset();//reset the simulation. Very important!
     	SimInitializer.generateSimulation(simState, config);   		
 		simState.start();	
 		do
@@ -71,49 +75,59 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
 			{
 				break;
 			}
-		} while(simState.schedule.getSteps()<= 50);	
-
-		simState.finish();
+		} while(simState.schedule.getSteps()< 50);			
 		
 		UAS ownship = (UAS)simState.uasBag.get(0);
-		
-//		double globalMinDistanceToDanger=Double.MAX_VALUE;
-//		for(int j=0; j<simState.uasBag.size(); j++)
-//		{
-//			UAS uas = (UAS)simState.uasBag.get(j);
-//			double minDistanceToDanger=uas.getMinDistanceToDanger();
-//			if(minDistanceToDanger<globalMinDistanceToDanger)
-//			{
-//				globalMinDistanceToDanger = minDistanceToDanger;
-//			}
-//			
-//		}	
-//		System.out.println(globalMinDistanceToDanger);
-		
 
-		float fitness = (float) (1.0/(1+ownship.getMinDistanceToDanger()));		
+		int numAccident =((AccidentDetector)simState.observerBag.get(2)).getNoAccidents();// index 2 is AccidentDetector, see SimInitializer.java
+		float fitness=0;
+		if(numAccident>0)
+		{
+			fitness=1.0f;
+			System.out.println(Arrays.toString(ind2.genome));
+			System.out.println(config+"  "+simState.seed()+" --> "+ownship.getMinProximity()+numAccident);
+		}
+		else
+		{
+			fitness= (float) (1.0/(1+ownship.getMinProximity().toValue()));	
+		}
         
         if (!(ind2.fitness instanceof SimpleFitness))
             state.output.fatal("Whoa!  It's not a SimpleFitness!!!",null);
         
         ((SimpleFitness)ind2.fitness).setFitness(   state,            
 										            fitness,/// ...the fitness...
-										            (fitness==1));///... is the individual ideal?  Indicate here...
+										            false);///... is the individual ideal?  Indicate here...
         
         StringBuilder dataItem = new StringBuilder();
     	dataItem.append(state.generation+",");
-    	for (int i=0; i< ind2.genome.length-1; i++)
+    	for (int i=0; i< ind2.genome.length; i++)
     	{
     		dataItem.append(ind2.genome[i]+",");
     		
     	}
     	dataItem.append(fitness+",");
-    	dataItem.append(simState.getaDetector().getNoAccidents());
+    	dataItem.append(numAccident);
     	Simulation.simDataSet.add(dataItem.toString());        
-        MyStatistics.accidents[state.generation]+= simState.getaDetector().getNoAccidents();
+        MyStatistics.accidents[state.generation]+= numAccident;
 
         ind2.evaluated = true;
-        simState.reset();//reset the simulation. Very important!
+        simState.finish();
 	}
 
 }
+
+
+//final double ft2NMRate=0.000164578833693305;
+//final double fps2KnotRate=0.592484;
+//TCAS3D tcas3d= new TCAS3D();
+//Vect3 so= Vect3.makeXYZ(hostUAS.getLocation().x*ft2NMRate,hostUAS.getLocation().z*ft2NMRate,hostUAS.getLocation().y);
+//Vect3 si= Vect3.makeXYZ(intruder.getLocation().x*ft2NMRate,intruder.getLocation().z*ft2NMRate,intruder.getLocation().y);
+//Velocity vo= Velocity.makeVxyz(hostUAS.getVelocity().x*fps2KnotRate,hostUAS.getVelocity().z*fps2KnotRate,hostUAS.getVelocity().y);
+//Velocity vi= Velocity.makeVxyz(intruder.getVelocity().x*fps2KnotRate,intruder.getVelocity().z*fps2KnotRate,intruder.getVelocity().y);
+//double D=500*ft2NMRate;
+//double H=100;
+//double B=0;
+//double T=1000;
+//boolean result= tcas3d.conflict(so, vo, si, vi, D, H, B, T);
+//System.out.println(result);

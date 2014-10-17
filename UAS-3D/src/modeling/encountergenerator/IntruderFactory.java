@@ -15,6 +15,7 @@ import saa.sense.Radar;
 import saa.sense.SensorSet;
 import saa.sense.TCAS;
 import sim.util.Double3D;
+import configuration.Configuration;
 import configuration.IntruderConfig;
 import modeling.SAAModel;
 import modeling.uas.SenseParas;
@@ -58,7 +59,7 @@ public class IntruderFactory {
 		}
 		sensorSet.synthesize();
 		
-		AutoPilot ap= new AutoPilot(state, intruder,intruderPerformance, intruderConfig.intruderAutoPilotAlgorithmSelection,-999);
+		AutoPilot ap= new AutoPilot(state, intruder,Configuration.getInstance().globalConfig.whiteNoiseEnabler,intruderConfig.intruderAutoPilotAlgorithmSelection);
 		
 		CollisionAvoidanceAlgorithm caa;
 		switch(intruderConfig.intruderCollisionAvoidanceAlgorithmSelection)

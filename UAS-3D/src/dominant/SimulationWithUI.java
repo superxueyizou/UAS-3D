@@ -1,6 +1,3 @@
-/**
- * 
- */
 package dominant;
 
 import javax.swing.JFrame;
@@ -27,7 +24,7 @@ public class SimulationWithUI
     	Console c = new Console(saaModelWithUI); 
     	c.setBounds(1580, 0, 340, 380); 
 		c.setVisible(true);		
-		c.setWhenShouldEnd(42);
+		c.setWhenShouldEnd(50);
 		
 		SAAConfigurator configurator = new SAAConfigurator(saaModelWithUI.state, saaModelWithUI);
 		configurator.setBounds(1580, 380, 340,784); 

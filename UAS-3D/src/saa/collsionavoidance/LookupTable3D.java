@@ -42,8 +42,9 @@ public class LookupTable3D
 			indexFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx3d/generatedFiles/indexFile")));
 			costFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx3d/generatedFiles/costFile")));
 			actionFileReader = new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx3d/generatedFiles/actionFile")));
-			entryTimeDistributionFileReader= new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx3d/generatedFiles/entryTimeDistributionFile")));
-			
+//			entryTimeDistributionFileReader= new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx3d/generatedFiles/entryTimeDistributionFile1")));
+			entryTimeDistributionFileReader= new BufferedReader(new InputStreamReader(new FileInputStream("./src/saa/collsionavoidance/acasx3d/generatedFiles/entryTimeDistributionFile2")));
+
 			String buffer=null;
 			while((buffer=indexFileReader.readLine())!=null)
 			{

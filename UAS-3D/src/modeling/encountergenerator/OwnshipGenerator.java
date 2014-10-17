@@ -23,6 +23,7 @@ import saa.sense.Radar;
 import saa.sense.SensorSet;
 import saa.sense.TCAS;
 import sim.util.Double3D;
+import configuration.Configuration;
 import configuration.OwnshipConfig;
 
 /**
@@ -84,7 +85,7 @@ public class OwnshipGenerator
 		}
 		sensorSet.synthesize();
 		
-		AutoPilot ap= new AutoPilot(state, ownship,uasPerformance,ownshipConfig.ownshipAutoPilotAlgorithmSelection, -999);
+		AutoPilot ap= new AutoPilot(state, ownship,Configuration.getInstance().globalConfig.whiteNoiseEnabler, ownshipConfig.ownshipAutoPilotAlgorithmSelection);
 		
 		CollisionAvoidanceAlgorithm caa;
 		switch(ownshipConfig.ownshipCollisionAvoidanceAlgorithmSelection)

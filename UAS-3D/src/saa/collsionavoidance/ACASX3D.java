@@ -4,14 +4,12 @@
 package saa.collsionavoidance;
 
 import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
-
-import configuration.Configuration;
 
 import modeling.SAAModel;
 import modeling.uas.UAS;
@@ -23,6 +21,7 @@ import saa.collsionavoidance.acasx3d.ACASX3DUtils;
 import saa.collsionavoidance.acasx3d.MDPValueIteration;
 import sim.engine.SimState;
 import sim.util.Double2D;
+import configuration.Configuration;
 
 /**
  * @author Xueyi
@@ -31,6 +30,8 @@ import sim.util.Double2D;
 public class ACASX3D extends CollisionAvoidanceAlgorithm
 {
 	private static final long serialVersionUID = 1L;
+	private static final String entryTimeDistributionMethod="DTMC";//DTMC, MonteCarlo, SimplePointEstimate
+	
 	private SAAModel state; 
 	private UAS hostUAS;
 	private ArrayList<UAS> intruders;
@@ -93,7 +94,27 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 			
 			if(Math.abs(h)<=ACASX3DMDP.UPPER_H && r<=ACASX3DDTMC.UPPER_R)
 			{
-				Map<Integer, Double> entryTimeDistribution = calculateEntryTimeDistribution(intruder);
+				Map<Integer, Double> entryTimeDistribution;
+				switch (entryTimeDistributionMethod)
+				{
+				case "DTMC":
+					entryTimeDistribution= calculateEntryTimeDistributionDTMC(intruder);
+					break;
+				case "MonteCarlo":
+					entryTimeDistribution= calculateEntryTimeDistributionMC(intruder);
+					break;
+				case "SimplePointEstimate":
+					entryTimeDistribution= calculateEntryTimeDistributionSimple(intruder);
+					break;
+				default:
+					entryTimeDistribution= calculateEntryTimeDistributionDTMC(intruder);
+					break;
+				}
+//				for(Integer t: entryTimeDistribution.keySet())
+//				{
+//					System.out.println(t+"  , "+entryTimeDistribution.get(t));
+//				}
+				
 				Map<Integer, Double> qValuesMap2 = calculateQValuesMap(intruder, entryTimeDistribution);
 				for (Integer action : qValuesMap2.keySet()) 
 				{
@@ -134,7 +155,7 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 	}
 
 	
-	private Map<Integer, Double> calculateEntryTimeDistribution(UAS intruder)
+	private Map<Integer, Double> calculateEntryTimeDistributionDTMC(UAS intruder)
 	{
 		Double2D vctDistance = new Double2D(intruder.getLocation().x-hostUAS.getLocation().x, intruder.getLocation().z-hostUAS.getLocation().z);
 		Double2D vctVelocity = new Double2D(intruder.getVelocity().x-hostUAS.getVelocity().x, intruder.getVelocity().z-hostUAS.getVelocity().z);
@@ -203,6 +224,36 @@ public class ACASX3D extends CollisionAvoidanceAlgorithm
 			entryTimeLessThanTProb+=entryTime_prob.getValue();
 		}
 		entryTimeDistribution.put(MDPValueIteration.T+1, 1-entryTimeLessThanTProb);
+		return entryTimeDistribution;
+	}
+	
+	private Map<Integer, Double> calculateEntryTimeDistributionMC(UAS intruder)
+	{
+		return null;
+	}
+	
+	private Map<Integer, Double> calculateEntryTimeDistributionSimple(UAS intruder)
+	{
+		Map<Integer, Double> entryTimeDistribution = new TreeMap<>();// must be a sorted map
+		
+		Double2D vctDistance = new Double2D(intruder.getLocation().x-hostUAS.getLocation().x, intruder.getLocation().z-hostUAS.getLocation().z);
+		Double2D vctVelocity = new Double2D(intruder.getVelocity().x-hostUAS.getVelocity().x, intruder.getVelocity().z-hostUAS.getVelocity().z);
+		double timeToGo=-vctDistance.lengthSq()/vctDistance.dot(vctVelocity);
+		if(timeToGo<0 || timeToGo>MDPValueIteration.T)
+		{
+			entryTimeDistribution.put(0, 0.0);
+		}
+		else 
+		{
+			int tL=(int) Math.floor(timeToGo);
+			double tLProb=1-Math.abs(timeToGo-tL);
+			int tU=tL+1;
+			double tUProb=1-Math.abs(timeToGo-tU);
+			
+			entryTimeDistribution.put(tL, tLProb);
+			entryTimeDistribution.put(tU, tUProb);
+		}
+		
 		return entryTimeDistribution;
 	}
 	

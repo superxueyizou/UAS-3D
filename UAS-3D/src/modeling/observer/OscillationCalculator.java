@@ -2,13 +2,14 @@ package modeling.observer;
 
 import modeling.SAAModel;
 import modeling.env.Constants;
+import modeling.env.Entity;
 import modeling.uas.UAS;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Double3D;
 
 
-public class OscillationCalculator implements Constants,Steppable
+public class OscillationCalculator extends Entity
 {
 	/**
 	 * 
@@ -17,9 +18,10 @@ public class OscillationCalculator implements Constants,Steppable
 
 	private SAAModel state;
 
-	public OscillationCalculator()
+	public OscillationCalculator(int idNo, Double3D location)
 	{
-		
+		super(idNo, Constants.EntityType.TObserver);
+		this.location=location;		
 	}
 	
 	@Override

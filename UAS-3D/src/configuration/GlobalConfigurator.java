@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -145,8 +146,25 @@ public class GlobalConfigurator extends JPanel
 			}
 		});
 		
+		JRadioButton rdbtnWhiteNoiseEnabler = new JRadioButton("white noise enable?");
+		rdbtnWhiteNoiseEnabler.setBounds(12, 145, 229, 15);
+		this.add(rdbtnWhiteNoiseEnabler);
+		rdbtnWhiteNoiseEnabler.setSelected(config.globalConfig.whiteNoiseEnabler);
+		rdbtnWhiteNoiseEnabler.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) {
+				if(((JRadioButton)e.getSource()).isSelected())
+				{
+					config.globalConfig.whiteNoiseEnabler = true;
+				} else {
+					
+					config.globalConfig.whiteNoiseEnabler = false;
+				}
+			}
+		});
+		
 		JLabel lblAlertTime = new JLabel("Alert time");
-		lblAlertTime.setBounds(12, 156, 63, 23);
+		lblAlertTime.setBounds(10, 183, 63, 23);
 		add(lblAlertTime);
 		
 		alertTimeTextField = new JTextField();
@@ -154,198 +172,199 @@ public class GlobalConfigurator extends JPanel
 		alertTimeTextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				config.globalConfig.alertTime= Integer.parseInt(alertTimeTextField.getText());
-//				System.out.println(config.globalConfig.alertTime);
 			}
 		});
-		alertTimeTextField.setBounds(85, 157, 86, 20);
+		alertTimeTextField.setBounds(83, 184, 86, 20);
 		add(alertTimeTextField);
 		alertTimeTextField.setColumns(10);
+			
+		btnLoad = new JButton("Load");
+		btnLoad.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				String result = JOptionPane.showInputDialog(null, "copy and paste:", "Genome",JOptionPane.PLAIN_MESSAGE);
+
+				if(result!=null && !result.isEmpty())
+				{
+					result = result.trim();
+					String[] pArr= result.split("\\s+");
+					
+					Configuration config = Configuration.getInstance();
+					
+					config.ownshipConfig.ownshipVy=Double.parseDouble(pArr[0]);
+					config.ownshipConfig.ownshipGs=Double.parseDouble(pArr[1]);
+					config.ownshipConfig.ownshipBearing=Double.parseDouble(pArr[2]);
+					
+					IntruderConfig intruderConfig1=new IntruderConfig();
+					intruderConfig1.intruderOffsetY=Double.parseDouble(pArr[3]);
+					intruderConfig1.intruderR=Double.parseDouble(pArr[4]);
+					intruderConfig1.intruderTheta=Double.parseDouble(pArr[5]);			
+					intruderConfig1.intruderVy=Double.parseDouble(pArr[6]);
+					intruderConfig1.intruderGs=Double.parseDouble(pArr[7]);
+					intruderConfig1.intruderBearing=Double.parseDouble(pArr[8]);
+					config.intrudersConfig.put("intruder1", intruderConfig1);
+					   		
+				}
+			
+				SAAConfigurator newFrame = new SAAConfigurator(state, stateWithUI);
+				newFrame.setBounds(1580, 380, 340,784);
+				newFrame.setVisible(true);
+				newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	
+				if(br!=null)
+				{
+					System.err.println("you forgoet to close the file");
+				}
+				
+				((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent()).dispose();			
+
+			}
+		});
+		btnLoad.setBounds(12, 237, 77, 25);
+		this.add(btnLoad);
 		
+		JButton btnSave = new JButton("Save");
+		btnSave.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+			       
+				String result = JOptionPane.showInputDialog(null, "please add comments:", "Comments",JOptionPane.PLAIN_MESSAGE);
+			
+				String comment = "";
+				if(result!=null && !result.isEmpty())
+				{
+					comment = result.trim();
+				}
+				
+	        	StringBuilder dataItem = new StringBuilder();
+	        	dataItem.append(comment+",");
+	        	dataItem.append(config.ownshipConfig.ownshipVy+",");
+	        	dataItem.append(config.ownshipConfig.ownshipGs+",");
+	        	dataItem.append(config.ownshipConfig.ownshipBearing);
+    	
+	        	UTILS.writeDataItem2CSV("./src/tools/ChallengingDB.csv", dataItem.toString(), true);	        	        		
+				}					
+		});
+		btnSave.setBounds(211, 237, 77, 25);
+		this.add(btnSave);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.YELLOW);
+		panel.setForeground(Color.YELLOW);
+		panel.setBounds(12, 274, 276, 87);
+		add(panel);
+		panel.setLayout(null);
+		
+		
+		final JLabel lblFile = new JLabel("filename");
+		lblFile.setBounds(88, 12, 176, 26);
+		panel.add(lblFile);
+		
+		btnOpen = new JButton("open");
+		btnOpen.setBounds(12, 13, 70, 25);
+		panel.add(btnOpen);
+		btnOpen.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				
+				FileDialog fd = new FileDialog((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent(), "select a file", FileDialog.LOAD);
+				fd.setDirectory("/home/viki/GitLocal/Framework/UAS/");
+				fd.setFile("*.csv");
+				fd.setVisible(true);
+				String filename = fd.getFile();
+				file= fd.getDirectory()+fd.getFile();
+				lblFile.setText(filename);
+				System.out.println(file);
+				try {
+					br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+					br.readLine();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				btnNext.setEnabled(true);
+				btnFinish.setEnabled(true);
+				btnOpen.setEnabled(false);
+				btnLoad.setEnabled(false);
+				
+			}
+		});
+		
+		btnNext = new JButton("Next");// won't refresh the panel
+		btnNext.setBounds(12, 50, 66, 25);
+		panel.add(btnNext);
+		btnNext.setEnabled(false);
+		btnNext.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				try 
+				{					
+					String line = br.readLine();
+//					System.out.println(line);
+					if(line!=null && !line.isEmpty())
+					{
+						line = line.trim();
+						String[] pa= line.split(";");
+						String[] pArr = new String[14];
+//						System.out.println(pa.length);
+						for (int i=1; i<15; i++)
+						{
+							pArr[i-1]=pa[i];
+						}
+//						System.out.println(pArr[1]);
+						
+						Configuration config = Configuration.getInstance();
+						
+						config.ownshipConfig.ownshipVy=Double.parseDouble(pArr[0]);
+						config.ownshipConfig.ownshipGs=Double.parseDouble(pArr[1]);
+						config.ownshipConfig.ownshipBearing=Double.parseDouble(pArr[2]);
+						
+						IntruderConfig intruderConfig1=new IntruderConfig();
+						intruderConfig1.intruderOffsetY=Double.parseDouble(pArr[3]);
+						intruderConfig1.intruderR=Double.parseDouble(pArr[4]);
+						intruderConfig1.intruderTheta=Double.parseDouble(pArr[5]);			
+						intruderConfig1.intruderVy=Double.parseDouble(pArr[6]);
+						intruderConfig1.intruderGs=Double.parseDouble(pArr[7]);
+						intruderConfig1.intruderBearing=Double.parseDouble(pArr[8]);
+						config.intrudersConfig.put("intruder1", intruderConfig1);
+						 		
+					}
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}			
 	
-//		JLabel lblModelbuilderSetting = new JLabel("ModelBuilder Setting");
-//		lblModelbuilderSetting.setBounds(12, 151, 165, 15);
-//		this.add(lblModelbuilderSetting);
-//			
-//		btnLoad = new JButton("Load");
-//		btnLoad.addActionListener(new ActionListener() 
-//		{
-//			public void actionPerformed(ActionEvent e) 
-//			{
-//				String result = JOptionPane.showInputDialog(null, "copy and paste:", "Genome",JOptionPane.PLAIN_MESSAGE);
-//
-//				if(result!=null && !result.isEmpty())
-//				{
-//					result = result.trim();
-//					String[] pArr= result.split("\\s+");
-////						System.out.println(pArr[1]);
-//													
-//
-//					config.globalConfig.headOnSelected= Double.parseDouble(pArr[2]);
-//					config.globalConfig.headOnOffsetY=Double.parseDouble(pArr[3]);
-//					config.globalConfig.headOnPrefSpeed=Double.parseDouble(pArr[5]);
-//					   		
-//				}
-//			
-//				SAAConfigurator newFrame = new SAAConfigurator(state, stateWithUI);
-//				newFrame.setBounds(1500+80, 404, 340,786); // for windows: frame.setBounds(1500+40, 380, 380,700);
-//				newFrame.setVisible(true);
-//				newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	
-//				if(br!=null)
-//				{
-//					System.err.println("you forgoet to close the file");
-//				}
-//				
-//				((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent()).dispose();				
-//				
-////					System.out.println(config.globalConfig.selfDestDist);
-//			}
-//		});
-//		btnLoad.setBounds(12, 178, 77, 25);
-//		this.add(btnLoad);
-//		
-//		JButton btnSave = new JButton("Save");
-//		btnSave.addActionListener(new ActionListener() 
-//		{
-//			public void actionPerformed(ActionEvent e) 
-//			{
-//			       
-//				String result = JOptionPane.showInputDialog(null, "please add comments:", "Comments",JOptionPane.PLAIN_MESSAGE);
-//			
-//				String comment = "";
-//				if(result!=null && !result.isEmpty())
-//				{
-//					comment = result.trim();
-//				}
-//				
-//	        	StringBuilder dataItem = new StringBuilder();
-//	        	dataItem.append(comment+",");
-//	        	dataItem.append(config.globalConfig.selfPrefSpeed+",");
-//	        	dataItem.append(config.globalConfig.headOnSelected+",");
-//	        	dataItem.append(config.globalConfig.headOnOffsetY+",");
-//	        	dataItem.append(config.globalConfig.headOnPrefSpeed);	        	
-//	        	UTILS.writeDataItem2CSV("./src/tools/ChallengingDB.csv", dataItem.toString(), true);
-//        		
-//				}					
-//		});
-//		btnSave.setBounds(211, 178, 77, 25);
-//		this.add(btnSave);
-//		
-//		JPanel panel = new JPanel();
-//		panel.setBackground(Color.YELLOW);
-//		panel.setForeground(Color.YELLOW);
-//		panel.setBounds(12, 215, 276, 87);
-//		add(panel);
-//		panel.setLayout(null);
-//		
-//		
-//		final JLabel lblFile = new JLabel("filename");
-//		lblFile.setBounds(88, 12, 176, 26);
-//		panel.add(lblFile);
-//		
-//		btnOpen = new JButton("open");
-//		btnOpen.setBounds(12, 13, 70, 25);
-//		panel.add(btnOpen);
-//		btnOpen.addActionListener(new ActionListener() 
-//		{
-//			public void actionPerformed(ActionEvent e) 
-//			{
-//				
-//				FileDialog fd = new FileDialog((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent(), "select a file", FileDialog.LOAD);
-//				fd.setDirectory("/home/viki/GitLocal/Framework/UAS/");
-//				fd.setFile("*.csv");
-//				fd.setVisible(true);
-//				String filename = fd.getFile();
-//				file= fd.getDirectory()+fd.getFile();
-//				lblFile.setText(filename);
-//				System.out.println(file);
-//				try {
-//					br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-//					br.readLine();
-//				} catch (IOException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//				btnNext.setEnabled(true);
-//				btnFinish.setEnabled(true);
-//				btnOpen.setEnabled(false);
-//				btnLoad.setEnabled(false);
-//				
-//			}
-//		});
-//		
-//		btnNext = new JButton("Next");// won't refresh the panel
-//		btnNext.setBounds(12, 50, 66, 25);
-//		panel.add(btnNext);
-//		btnNext.setEnabled(false);
-//		btnNext.addActionListener(new ActionListener()
-//		{
-//			public void actionPerformed(ActionEvent e) 
-//			{
-//				try 
-//				{					
-//					String line = br.readLine();
-////					System.out.println(line);
-//					if(line!=null && !line.isEmpty())
-//					{
-//						line = line.trim();
-//						String[] pa= line.split(";");
-//						String[] pArr = new String[14];
-////						System.out.println(pa.length);
-//						for (int i=1; i<15; i++)
-//						{
-//							pArr[i-1]=pa[i];
-//						}
-////							System.out.println(pArr[1]);
-//														
-//						config.globalConfig.selfPrefSpeed=Double.parseDouble(pArr[1]);
-//						
-//						config.globalConfig.headOnSelected= Double.parseDouble(pArr[2]);
-//						config.globalConfig.headOnOffsetY=Double.parseDouble(pArr[3]);
-//						config.globalConfig.headOnPrefSpeed=Double.parseDouble(pArr[5]);
-//						 		
-//					}
-//				} catch (FileNotFoundException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				} catch (IOException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}			
-//			
-////				SAAConfigurator newFrame = new SAAConfigurator(state, stateWithUI);
-////				newFrame.setBounds(1500+80, 404, 340,786); // for windows: frame.setBounds(1500+40, 380, 380,700);
-////				newFrame.setVisible(true);
-////				newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	
-////				
-////				((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent()).dispose();			
-//			}
-//		});
-//		
-//		btnFinish = new JButton("Finish");
-//		btnFinish.setBounds(120, 50, 76, 25);
-//		panel.add(btnFinish);
-//		btnFinish.setEnabled(false);
-//		btnFinish.addActionListener(new ActionListener() 
-//		{
-//			public void actionPerformed(ActionEvent e) 
-//			{
-//				if(br!=null)
-//				{
-//					// Done with the file
-//					try {
-//						br.close();
-//						br = null;
-//					} catch (IOException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-//				}
-//				btnNext.setEnabled(false);
-//				btnFinish.setEnabled(false);
-//				btnOpen.setEnabled(true);
-//				btnLoad.setEnabled(true);
-//			}
-//		});		
+			}
+		});
+		
+		btnFinish = new JButton("Finish");
+		btnFinish.setBounds(120, 50, 76, 25);
+		panel.add(btnFinish);
+		btnFinish.setEnabled(false);
+		btnFinish.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent e) 
+			{
+				if(br!=null)
+				{
+					// Done with the file
+					try {
+						br.close();
+						br = null;
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+				btnNext.setEnabled(false);
+				btnFinish.setEnabled(false);
+				btnOpen.setEnabled(true);
+				btnLoad.setEnabled(true);
+			}
+		});		
 				
 		
 	}

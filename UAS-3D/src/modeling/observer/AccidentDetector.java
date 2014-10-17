@@ -1,16 +1,12 @@
 package modeling.observer;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 
-import configuration.Configuration;
 import modeling.SAAModel;
 import modeling.env.Constants;
+import modeling.env.Entity;
 import modeling.uas.UAS;
 import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.util.Double3D;
+import configuration.Configuration;
 
 
 /**
@@ -21,45 +17,47 @@ import sim.util.Double3D;
  * @author xueyi
  *
  */
-public class AccidentDetector implements Constants,Steppable
+public class AccidentDetector extends Entity
 {
 	private static final long serialVersionUID = 1L;
 	
-	private PrintStream ps;
 	private int noAccidents=0;	
-	private String accidentLogFileName="AccidentLog.txt";
+//	private PrintStream ps;	
+//	private String accidentLogFileName="AccidentLog.txt";
 	
-	public AccidentDetector()
+	public AccidentDetector(int idNo, Double3D location)
 	{
-		File accidentLog = new File(accidentLogFileName);
-		try{
-			ps= new PrintStream(new FileOutputStream(accidentLog));
-		}
-		catch(FileNotFoundException e)
-		{
-			System.out.print("File not found!");
-			return;
-		}
+		super(idNo, Constants.EntityType.TObserver);
+		this.location=location;
+//		File accidentLog = new File(accidentLogFileName);
+//		try{
+//			ps= new PrintStream(new FileOutputStream(accidentLog));
+//		}
+//		catch(FileNotFoundException e)
+//		{
+//			System.out.print("File not found!");
+//			return;
+//		}
 				
 	}
 	
-	public void reset()
-	{
-		noAccidents=0;
-		if(ps!=null)
-		{
-			ps.close();
-		}
-		File accidentLog = new File(accidentLogFileName);
-		try{
-			ps= new PrintStream(new FileOutputStream(accidentLog));
-		}
-		catch(FileNotFoundException e)
-		{
-			System.out.print("File not found!");
-			return;
-		}
-	}
+//	public void reset()
+//	{
+//		noAccidents=0;
+//		if(ps!=null)
+//		{
+//			ps.close();
+//		}
+//		File accidentLog = new File(accidentLogFileName);
+//		try{
+//			ps= new PrintStream(new FileOutputStream(accidentLog));
+//		}
+//		catch(FileNotFoundException e)
+//		{
+//			System.out.print("File not found!");
+//			return;
+//		}
+//	}
 
 	/* (non-Javadoc)
 	 * @see state.engine.Steppable#step(state.engine.SimState)
@@ -84,13 +82,15 @@ public class AccidentDetector implements Constants,Steppable
 			}
 			if (detectCollisionBetweenUAS(ownship, intruder))
 			{
-				addLog(Constants.AccidentType.CLASHWITHOTHERUAS, ownship.getAlias(), state.schedule.getSteps(), ownship.getLocation(), "the other UAS's is"+intruder.getAlias());
+//				addLog(Constants.AccidentType.CLASHWITHOTHERUAS, ownship.getAlias(), state.schedule.getSteps(), ownship.getLocation(), "the other UAS's is"+intruder.getAlias());
 				noAccidents++;
 				ownship.isActive=false;
 				intruder.isActive=false;
 				break;
 			}
 		}
+
+		dealWithTermination(state);		
 			
 //		UAS uas1;
 //        outerLoop:
@@ -126,10 +126,10 @@ public class AccidentDetector implements Constants,Steppable
 
 	}
 	
-	public void addLog(AccidentType t, String ownshipAlias, long step, Double3D coor, String str)
-	{
-		ps.println(t.toString() +": "+ownshipAlias + "; time:"+step+"steps; location: ("+coor.x+" , "+coor.y+" , "+coor.z+")" + str);
-	}
+//	public void addLog(AccidentType t, String ownshipAlias, long step, Double3D coor, String str)
+//	{
+//		ps.println(t.toString() +": "+ownshipAlias + "; time:"+step+"steps; location: ("+coor.x+" , "+coor.y+" , "+coor.z+")" + str);
+//	}
 	
 	
 	private boolean detectCollisionBetweenUAS(UAS uas1, UAS uas2)
@@ -139,6 +139,25 @@ public class AccidentDetector implements Constants,Steppable
 		return (deltaHori<=500*500)&&(deltaVert<=100);		
 	}
 	
+	
+    public void dealWithTermination(SAAModel state)
+	{
+    	int noActiveAgents =0;
+    	for(Object o: state.uasBag)
+    	{
+    		if(((UAS)o).isActive)
+    		{
+    			noActiveAgents++;
+    		}
+    		
+    	}
+    	
+		if(noActiveAgents < 1)
+		{
+			state.schedule.clear();
+			state.kill();
+		}
+	 }
 
 	public int getNoAccidents() {
 		return noAccidents;

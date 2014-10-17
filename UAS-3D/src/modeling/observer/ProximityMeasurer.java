@@ -2,18 +2,21 @@ package modeling.observer;
 
 import modeling.SAAModel;
 import modeling.env.Constants;
+import modeling.env.Entity;
+import modeling.uas.Proximity;
 import modeling.uas.UAS;
 import sim.engine.SimState;
-import sim.engine.Steppable;
+import sim.util.Double3D;
 
 
-public class ProximityMeasurer implements Constants,Steppable
+public class ProximityMeasurer extends Entity
 {
 	private static final long serialVersionUID = 1L;
-
-	public ProximityMeasurer()
+	
+	public ProximityMeasurer(int idNo, Double3D location)
 	{
-		
+		super(idNo, Constants.EntityType.TObserver);
+		this.location=location;	
 	}
 	
 	@Override
@@ -21,24 +24,27 @@ public class ProximityMeasurer implements Constants,Steppable
 	{
 		SAAModel state = (SAAModel)simState;	
 		UAS ownship=(UAS) state.uasBag.get(0);
-		double tempDistanceToDanger=Double.MAX_VALUE;
-	    for(int i=1; i<state.uasBag.size(); i++)
+		Double3D ownshipLoc=ownship.getLocation();
+		
+		Proximity tempP=new Proximity(Double.MAX_VALUE,Double.MAX_VALUE);
+		for(int i=1; i<state.uasBag.size(); i++)//loop all the intruders
 		{		    	
 			UAS intruder= (UAS)state.uasBag.get(i);
 			if(!intruder.isActive)
 			{
 				continue;
 			}
-			double d= ownship.getLocation().distance(intruder.getLocation());
-	    	if(d<tempDistanceToDanger)
+			Double3D intruderLoc=intruder.getLocation();			
+			Proximity p= new Proximity(ownshipLoc,intruderLoc);
+	    	if(p.lessThan(tempP))
 	    	{
-	    		tempDistanceToDanger=d;
-	    		
+	    		tempP=p;	    		
 	    	}	    
 		}
-		if (tempDistanceToDanger < ownship.getMinDistanceToDanger())
+	    ownship.setTempProximity(tempP);
+		if (tempP.lessThan( ownship.getMinProximity()))
 		{
-			ownship.setMinDistanceToDanger(tempDistanceToDanger);	
+			ownship.setMinProximity(tempP);	
 		}
 		
 //		UAS uas1;
@@ -73,5 +79,6 @@ public class ProximityMeasurer implements Constants,Steppable
 //			}
 //		}
 		
-	}
+	}	
+
 }

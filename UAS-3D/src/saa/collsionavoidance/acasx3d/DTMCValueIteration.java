@@ -69,12 +69,12 @@ public class DTMCValueIteration
 
 	}
 	
-	public void storeValues() 
+	public void storeValues(String entryTimeDistributionFileName) 
 	{	
 		FileWriter entryTimeDistributionFileWriter = null;	
 		try 
         {
-            entryTimeDistributionFileWriter = new FileWriter("src/saa/collsionavoidance/acasx3d/generatedFiles/entryTimeDistributionFile",false);
+            entryTimeDistributionFileWriter = new FileWriter("src/saa/collsionavoidance/acasx3d/generatedFiles/"+entryTimeDistributionFileName,false);
 
             for(int k=0; k<=T;k++ )
             {

@@ -17,31 +17,36 @@ public class AutoPilot implements Steppable
 	private SAAModel state; 
 	private UAS hostUAS;
 	
-	private final double SDX;
-	private final double SDY;
-	private final double SDZ;
-	
-	private String type;//normative manoeuvre type
-	private int caActionCode;//action code from collision avoidance algorithm
-	private ChorusResData ssData=null; // data from self separation algorithm
 	private UASPerformance uasPerformance;
+	private double SDX=0;
+	private double SDY=0;
+	private double SDZ=0;
+	
+	private String normativeMode=null;//normative manoeuvre normativeMode
+	private int caActionCode=-999;//action code from collision avoidance algorithm
+	private ChorusResData ssData=null; // data from self separation algorithm
+	
 
-	public AutoPilot(SimState simstate, UAS uas, UASPerformance uasPerformance, String type, int caActionCode) 
+	public AutoPilot(SimState simstate, UAS uas, Boolean enableWhiteNoise, String mode) 
 	{
 		state = (SAAModel)simstate;
 		hostUAS = uas;	
-		this.type=type;
-		this.caActionCode=caActionCode;
-		this.uasPerformance=uasPerformance;
-		this.SDX=this.uasPerformance.getStdDevX();
-		this.SDY=this.uasPerformance.getStdDevY();
-		this.SDZ=this.uasPerformance.getStdDevZ();
+
+		uasPerformance=hostUAS.getUasPerformance();
+		if(enableWhiteNoise)
+		{
+			this.SDX=uasPerformance.getStdDevX();
+			this.SDY=uasPerformance.getStdDevY();
+			this.SDZ=uasPerformance.getStdDevZ();
+		}		
+		
+		normativeMode=mode;
 	}
 
 
 	public void step(SimState simState) 
 	{
-		if(hostUAS.isActive == true)
+		if(hostUAS.isActive)
 		{	
 			if(caActionCode>=0)
 			{
@@ -67,23 +72,27 @@ public class AutoPilot implements Steppable
 				}
 				
 			}
-			else if(type=="WhiteNoise")
+			else if(normativeMode=="WhiteNoise")
 			{
 				hostUAS.setApWp(executeWhiteNoise());
 			}
-			else if(type=="Specific")
+			else if(normativeMode=="Specific")
 			{
 				double ay=SDY * state.random.nextGaussian()*(state.random.nextBoolean()?1:-1);
 				hostUAS.setApWp(executeSpecific(ay));
-			}
-//			else if(type=="Dubins")
+			}	
+//			else if(normativeMode=="Dubins")
 //			{
 //				hostUAS.setApWp(executeDubins());
 //			}
-//			else if (type=="ToTarget")
+//			else if (normativeMode=="ToTarget")
 //			{
 //				hostUAS.setApWp(executeToTarget());
 //			}
+			else
+			{
+				System.err.println("Something wrong with public class AutoPilot implements Steppable/public void step(SimState simState) ");
+			}
 			
 		}		
 	}
@@ -286,6 +295,15 @@ public class AutoPilot implements Steppable
 		hostUAS.setVelocity(new Double3D(vx, vy+ay, vz));
 		wp.setLocation(new Double3D(x , y, z));		
 		return wp;
+	}
+	
+	public String getNormativeMode() {
+		return normativeMode;
+	}
+
+
+	public void setNormativeMode(String normativeMode) {
+		this.normativeMode = normativeMode;
 	}
 	
 	public int getActionCode() {

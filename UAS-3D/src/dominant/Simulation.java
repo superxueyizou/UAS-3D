@@ -25,7 +25,7 @@ public class Simulation
 	 */
 	public static void main(String[] args) throws Exception
 	{
-		String[] params = new String[]{"-file", "src/dominant/MaxNMAC.params"}; //MaxOscillation, MaxNMAC, MaxArea,RandMaxNMAC, RandMaxOscillation, RandMaxArea
+		String[] params = new String[]{"-file", "src/dominant/MaxNMAC.params"}; //MaxNMAC, MaxNMACRand
 		ParameterDatabase database = Evolve.loadParameterDatabase(params);
 		EvolutionState eState= Evolve.initialize(database, 0);
 		eState.startFresh();
@@ -33,7 +33,7 @@ public class Simulation
 		
 		String title = "generation,ownshipVy,ownshipGs,ownshipBearing,"+
 				   "intruder1OffsetY,intruder1R,intruder1Theta,intruder1Vy,intruder1Gs,intruder1Bearing,"+  
-//				   "intruder2OffsetX,intruder2OffsetY,intruder2OffsetZ,intruder2Vy,intruder2Gs,intruder2Bearing,"+  
+//				   "intruder2OffsetY,intruder2R,intruder2Theta,intruder2Vy,intruder2Gs,intruder2Bearing,"+  
 				   "fitness," +"accident"+"\n";
 		boolean isAppending = false;
 		String label = database.getLabel();
@@ -84,15 +84,16 @@ public class Simulation
 			config.intrudersConfig.put("intruder1", intruderConfig1);
 			
 //			IntruderConfig intruderConfig2=new IntruderConfig();
-//			intruderConfig2.intruderOffsetX=Double.parseDouble(pArr[9]);
-//			intruderConfig2.intruderOffsetY=Double.parseDouble(pArr[10]);
-//			intruderConfig2.intruderOffsetZ=Double.parseDouble(pArr[11]);
-//			intruderConfig2.intruderVx=Double.parseDouble(pArr[12]);
-//			intruderConfig2.intruderVy=Double.parseDouble(pArr[13]);
-//			intruderConfig2.intruderVz=Double.parseDouble(pArr[14]);
-//			config.intrudersConfig.put("intruder2", intruderConfig2);
+//			intruderConfig2.intruderOffsetY=Double.parseDouble(pArr[9]);
+//			intruderConfig2.intruderR=Double.parseDouble(pArr[10]);
+//			intruderConfig2.intruderTheta=Double.parseDouble(pArr[11]);			
+//			intruderConfig2.intruderVy=Double.parseDouble(pArr[12]);
+//			intruderConfig2.intruderGs=Double.parseDouble(pArr[13]);
+//			intruderConfig2.intruderBearing=Double.parseDouble(pArr[14]);
+//			config.intrudersConfig.put("intruder21", intruderConfig2);
 	    		
 			System.out.println("\nRecurrenceWithGUI");
+			System.out.println(config);
 			SimulationWithUI.main(null);
 		}	
 		else if (confirmationResult == 2 )
