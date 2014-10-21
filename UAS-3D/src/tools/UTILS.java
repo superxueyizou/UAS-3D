@@ -95,7 +95,7 @@ public class UTILS {
             fw = new FileWriter(fileName,isAppending);
             //输出标题头
             //注意列之间用","间隔,写完一行需要回车换行"rn"
-            if(!isAppending)
+            if(title!=null && !isAppending)
             {
             	fw.write(title);
             }            

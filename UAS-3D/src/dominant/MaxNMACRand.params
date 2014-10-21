@@ -6,7 +6,7 @@ parent.0		= D:/MyLibrary/EclipseWorkspace/ECJ/src/ec/simple/simple.params
 stat.file = $MaxNMACRandStatics.stat
 stat.num-children = 1
 stat.child.0 = dominant.MyStatistics
-stat.child.0.file = $MaxNMACRandStatics2.stat
+stat.child.0.file = $MaxNMACRandStaticsP.stat
 
 pop.subpop.0.size = 50000
 generations = 1

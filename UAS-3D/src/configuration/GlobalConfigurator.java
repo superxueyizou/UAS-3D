@@ -15,6 +15,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+
 import sim.display.GUIState;
 import sim.engine.SimState;
 import tools.UTILS;
@@ -204,20 +206,15 @@ public class GlobalConfigurator extends JPanel
 					intruderConfig1.intruderGs=Double.parseDouble(pArr[7]);
 					intruderConfig1.intruderBearing=Double.parseDouble(pArr[8]);
 					config.intrudersConfig.put("intruder1", intruderConfig1);
-					   		
+					
+					if(br!=null)
+					{
+						System.err.println("you forgoet to close the file");
+					}
+					   
+					SAAConfigurator theSAAConfigurator = ((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent());
+					theSAAConfigurator.refresh();	
 				}
-			
-				SAAConfigurator newFrame = new SAAConfigurator(state, stateWithUI);
-				newFrame.setBounds(1580, 380, 340,784);
-				newFrame.setVisible(true);
-				newFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);	
-				if(br!=null)
-				{
-					System.err.println("you forgoet to close the file");
-				}
-				
-				((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent()).dispose();			
-
 			}
 		});
 		btnLoad.setBounds(12, 237, 77, 25);
@@ -241,10 +238,17 @@ public class GlobalConfigurator extends JPanel
 	        	dataItem.append(comment+",");
 	        	dataItem.append(config.ownshipConfig.ownshipVy+",");
 	        	dataItem.append(config.ownshipConfig.ownshipGs+",");
-	        	dataItem.append(config.ownshipConfig.ownshipBearing);
-    	
-	        	UTILS.writeDataItem2CSV("./src/tools/ChallengingDB.csv", dataItem.toString(), true);	        	        		
-				}					
+	        	dataItem.append(config.ownshipConfig.ownshipBearing+",");
+	        	
+	        	IntruderConfig intruder1Config = config.intrudersConfig.get("intruder1");
+	        	dataItem.append(intruder1Config.intruderOffsetY+",");
+	        	dataItem.append(intruder1Config.intruderR+",");
+	        	dataItem.append(intruder1Config.intruderTheta+",");
+	        	dataItem.append(intruder1Config.intruderVy+",");
+	        	dataItem.append(intruder1Config.intruderGs+",");
+	        	dataItem.append(intruder1Config.intruderBearing);	      	
+	        	UTILS.writeDataItem2CSV("./src/tools/ChallengingDB_MaxNMAC.csv", dataItem.toString(), true);	        	        		
+			}					
 		});
 		btnSave.setBounds(211, 237, 77, 25);
 		this.add(btnSave);
@@ -252,7 +256,7 @@ public class GlobalConfigurator extends JPanel
 		JPanel panel = new JPanel();
 		panel.setBackground(Color.YELLOW);
 		panel.setForeground(Color.YELLOW);
-		panel.setBounds(12, 274, 276, 87);
+		panel.setBounds(12, 274, 276, 127);
 		add(panel);
 		panel.setLayout(null);
 		
@@ -270,26 +274,34 @@ public class GlobalConfigurator extends JPanel
 			{
 				
 				FileDialog fd = new FileDialog((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent(), "select a file", FileDialog.LOAD);
-				fd.setDirectory("/home/viki/GitLocal/Framework/UAS/");
+				String workingDir = System.getProperty("user.dir");
+				fd.setDirectory(workingDir);
 				fd.setFile("*.csv");
 				fd.setVisible(true);
 				String filename = fd.getFile();
-				file= fd.getDirectory()+fd.getFile();
-				lblFile.setText(filename);
-				System.out.println(file);
-				try {
-					br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
-					br.readLine();
-				} catch (IOException e1) {
-					e1.printStackTrace();
+				if(filename!=null)
+				{
+					file= fd.getDirectory()+fd.getFile();
+					lblFile.setText(filename);
+//					System.out.println(file);
+					try {
+						br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
+						br.readLine();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					
+					btnNext.setEnabled(true);
+					btnFinish.setEnabled(true);
+					btnOpen.setEnabled(false);
+					btnLoad.setEnabled(false);
 				}
-				btnNext.setEnabled(true);
-				btnFinish.setEnabled(true);
-				btnOpen.setEnabled(false);
-				btnLoad.setEnabled(false);
-				
 			}
 		});
+		
+		final JLabel lblCurrentConfig = new JLabel("");
+		lblCurrentConfig.setBounds(10, 86, 256, 30);
+		panel.add(lblCurrentConfig);
 		
 		btnNext = new JButton("Next");// won't refresh the panel
 		btnNext.setBounds(12, 50, 66, 25);
@@ -306,31 +318,47 @@ public class GlobalConfigurator extends JPanel
 					if(line!=null && !line.isEmpty())
 					{
 						line = line.trim();
-						String[] pa= line.split(";");
-						String[] pArr = new String[14];
-//						System.out.println(pa.length);
-						for (int i=1; i<15; i++)
+						lblCurrentConfig.setText(line);
+						String[] pa= line.split(",");
+						if(pa.length!=9)
 						{
-							pArr[i-1]=pa[i];
+							lblCurrentConfig.setText("NO Accident, "+ "try next!");
 						}
-//						System.out.println(pArr[1]);
+						else
+						{
+//							System.out.println(Arrays.toString(pa)+pa.length);
+							String[] pArr = new String[9];
+							for (int i=0; i<9; i++)
+							{
+								pArr[i]=pa[i];
+							}
 						
-						Configuration config = Configuration.getInstance();
+							Configuration config = Configuration.getInstance();
+							
+							config.ownshipConfig.ownshipVy=Double.parseDouble(pArr[0]);
+							config.ownshipConfig.ownshipGs=Double.parseDouble(pArr[1]);
+							config.ownshipConfig.ownshipBearing=Double.parseDouble(pArr[2]);
+							
+							IntruderConfig intruderConfig1=new IntruderConfig();
+							intruderConfig1.intruderOffsetY=Double.parseDouble(pArr[3]);
+							intruderConfig1.intruderR=Double.parseDouble(pArr[4]);
+							intruderConfig1.intruderTheta=Double.parseDouble(pArr[5]);			
+							intruderConfig1.intruderVy=Double.parseDouble(pArr[6]);
+							intruderConfig1.intruderGs=Double.parseDouble(pArr[7]);
+							intruderConfig1.intruderBearing=Double.parseDouble(pArr[8]);
+							config.intrudersConfig.put("intruder1", intruderConfig1);
+															
+							SAAConfigurator theSAAConfigurator = ((SAAConfigurator)((JButton)e.getSource()).getRootPane().getParent());
+							theSAAConfigurator.refresh();	
+						}
 						
-						config.ownshipConfig.ownshipVy=Double.parseDouble(pArr[0]);
-						config.ownshipConfig.ownshipGs=Double.parseDouble(pArr[1]);
-						config.ownshipConfig.ownshipBearing=Double.parseDouble(pArr[2]);
-						
-						IntruderConfig intruderConfig1=new IntruderConfig();
-						intruderConfig1.intruderOffsetY=Double.parseDouble(pArr[3]);
-						intruderConfig1.intruderR=Double.parseDouble(pArr[4]);
-						intruderConfig1.intruderTheta=Double.parseDouble(pArr[5]);			
-						intruderConfig1.intruderVy=Double.parseDouble(pArr[6]);
-						intruderConfig1.intruderGs=Double.parseDouble(pArr[7]);
-						intruderConfig1.intruderBearing=Double.parseDouble(pArr[8]);
-						config.intrudersConfig.put("intruder1", intruderConfig1);
-						 		
 					}
+					else
+					{
+						lblCurrentConfig.setText("null, "+ "try next!");
+					}
+					
+					
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
@@ -344,6 +372,7 @@ public class GlobalConfigurator extends JPanel
 		btnFinish.setBounds(120, 50, 76, 25);
 		panel.add(btnFinish);
 		btnFinish.setEnabled(false);
+				
 		btnFinish.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e) 
@@ -355,7 +384,6 @@ public class GlobalConfigurator extends JPanel
 						br.close();
 						br = null;
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}

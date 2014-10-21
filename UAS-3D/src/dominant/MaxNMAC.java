@@ -3,8 +3,6 @@
  */
 package dominant;
 
-import java.util.Arrays;
-
 import modeling.SAAModel;
 import modeling.SimInitializer;
 import modeling.observer.AccidentDetector;
@@ -39,31 +37,7 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
       
         DoubleVectorIndividual ind2 = (DoubleVectorIndividual)ind;
              
-        double ownshipVy= ind2.genome[0];
-        double ownshipGs= ind2.genome[1];
-        double ownshipBearing= ind2.genome[2];
-        
-        double intruder1OffsetY= ind2.genome[3];
-        double intruder1R= ind2.genome[4];
-        double intruder1Theta= ind2.genome[5];
-        double intruder1Vy= ind2.genome[6];
-        double intruder1Gs= ind2.genome[7];
-        double intruder1Bearing= ind2.genome[8];
- 				
-		Configuration config = Configuration.getInstance();
-		
-		config.ownshipConfig.ownshipVy=ownshipVy;
-		config.ownshipConfig.ownshipGs=ownshipGs;		
-		config.ownshipConfig.ownshipBearing=ownshipBearing;
-		
-		IntruderConfig intruderConfig1=new IntruderConfig();		
-		intruderConfig1.intruderOffsetY=intruder1OffsetY;
-		intruderConfig1.intruderR=intruder1R;
-		intruderConfig1.intruderTheta=intruder1Theta;
-		intruderConfig1.intruderVy=intruder1Vy;
-		intruderConfig1.intruderGs=intruder1Gs;
-		intruderConfig1.intruderBearing=intruder1Bearing;
-		config.intrudersConfig.put("intruder1", intruderConfig1);
+        Configuration config =ind2Config(ind2);
 		
 		SAAModel simState= new SAAModel(785945568, config, true); 	
 		simState.reset();//reset the simulation. Very important!
@@ -84,8 +58,6 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
 		if(numAccident>0)
 		{
 			fitness=1.0f;
-			System.out.println(Arrays.toString(ind2.genome));
-			System.out.println(config+"  "+simState.seed()+" --> "+ownship.getMinProximity()+numAccident);
 		}
 		else
 		{
@@ -115,6 +87,36 @@ public class MaxNMAC extends Problem implements SimpleProblemForm
         simState.finish();
 	}
 
+	public static Configuration ind2Config(DoubleVectorIndividual ind2)
+	{
+		
+		double ownshipVy= ind2.genome[0];
+        double ownshipGs= ind2.genome[1];
+        double ownshipBearing= ind2.genome[2];
+        
+        double intruder1OffsetY= ind2.genome[3];
+        double intruder1R= ind2.genome[4];
+        double intruder1Theta= ind2.genome[5];
+        double intruder1Vy= ind2.genome[6];
+        double intruder1Gs= ind2.genome[7];
+        double intruder1Bearing= ind2.genome[8];
+ 				
+		Configuration config = Configuration.getInstance();
+		
+		config.ownshipConfig.ownshipVy=ownshipVy;
+		config.ownshipConfig.ownshipGs=ownshipGs;		
+		config.ownshipConfig.ownshipBearing=ownshipBearing;
+		
+		IntruderConfig intruderConfig1=new IntruderConfig();		
+		intruderConfig1.intruderOffsetY=intruder1OffsetY;
+		intruderConfig1.intruderR=intruder1R;
+		intruderConfig1.intruderTheta=intruder1Theta;
+		intruderConfig1.intruderVy=intruder1Vy;
+		intruderConfig1.intruderGs=intruder1Gs;
+		intruderConfig1.intruderBearing=intruder1Bearing;
+		config.intrudersConfig.put("intruder1", intruderConfig1);
+		return config;
+	}
 }
 
 
